@@ -1,0 +1,77 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../controllers/auth_controller.dart';
+import '../../views/auth/login_view.dart';
+import '../../views/auth/register_view.dart';
+import '../../views/home/home_view.dart';
+import '../../views/menu/menu_view.dart';
+import '../../views/cart/cart_view.dart';
+import '../../views/checkout/checkout_view.dart';
+import '../../views/orders/orders_view.dart';
+import '../../views/profile/profile_view.dart';
+
+final routerProvider = Provider<GoRouter>((ref) {
+  final isAuth = ref.watch(authControllerProvider.select((state) => state.isAuthenticated));
+
+  return GoRouter(
+    initialLocation: '/login',
+    redirect: (context, state) {
+      final isAuthRoute = state.uri.path == '/login' || state.uri.path == '/register';
+
+      if (!isAuth && !isAuthRoute) return '/login';
+      if (isAuth && isAuthRoute) return '/home';
+      return null;
+    },
+    routes: [
+      GoRoute(path: '/login', builder: (_, _) => const LoginView()),
+      GoRoute(path: '/register', builder: (_, _) => const RegisterView()),
+      ShellRoute(
+        builder: (context, state, child) => _AppShell(child: child),
+        routes: [
+          GoRoute(path: '/home', builder: (_, _) => const HomeView()),
+          GoRoute(path: '/orders', builder: (_, _) => const OrdersView()),
+          GoRoute(path: '/cart', builder: (_, _) => const CartView()),
+          GoRoute(path: '/profile', builder: (_, _) => const ProfileView()),
+          GoRoute(path: '/menu', builder: (_, _) => const MenuView()),
+          GoRoute(path: '/checkout', builder: (_, _) => const CheckoutView()),
+        ],
+      ),
+    ],
+  );
+});
+
+class _AppShell extends StatelessWidget {
+  final Widget child;
+
+  const _AppShell({required this.child});
+
+  static const _routes = ['/home', '/orders', '/cart', '/profile'];
+
+  int _indexFromPath(String path) {
+    for (int i = 0; i < _routes.length; i++) {
+      if (path.startsWith(_routes[i])) return i;
+    }
+    return 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentPath = GoRouterState.of(context).uri.path;
+    final selectedIndex = _indexFromPath(currentPath);
+
+    return Scaffold(
+      body: child,
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (index) => context.go(_routes[index]),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Início'),
+          NavigationDestination(icon: Icon(Icons.receipt_long_outlined), selectedIcon: Icon(Icons.receipt_long), label: 'Pedidos'),
+          NavigationDestination(icon: Icon(Icons.shopping_cart_outlined), selectedIcon: Icon(Icons.shopping_cart), label: 'Carrinho'),
+          NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'Perfil'),
+        ],
+      ),
+    );
+  }
+}

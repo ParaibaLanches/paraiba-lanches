@@ -1,0 +1,55 @@
+import '../core/constants/api_constants.dart';
+import '../models/cart_item.dart';
+import '../models/order.dart';
+import 'api_service.dart';
+
+class OrderService {
+  final ApiService _api;
+
+  OrderService(this._api);
+
+  Future<Order> createOrder({
+    required List<CartItem> items,
+    required String paymentMethod,
+    required double paymentAmount,
+    String orderType = 'local',
+    String notes = '',
+  }) async {
+    final res = await _api.post(ApiConstants.orders, data: {
+      'order_type': orderType,
+      'notes': notes,
+      'items': items
+          .map((i) => {
+                'product_id': i.product.id,
+                'quantity': i.quantity,
+                'notes': i.notes,
+              })
+          .toList(),
+      'payments': [
+        {'method': paymentMethod, 'amount': paymentAmount}
+      ],
+    });
+    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao criar pedido');
+    return Order.fromJson(res['data']);
+  }
+
+  Future<List<Order>> getMyOrders() async {
+    final res = await _api.get(ApiConstants.orders);
+    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao buscar pedidos');
+    return (res['data'] as List).map((e) => Order.fromJson(e)).toList();
+  }
+
+  Future<Order> getOrderById(int id) async {
+    final res = await _api.get('${ApiConstants.orders}/$id');
+    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao buscar pedido');
+    return Order.fromJson(res['data']);
+  }
+
+  Future<double> calculateDeliveryFee(String destination) async {
+    final res = await _api.get(ApiConstants.calculateDelivery, params: {
+      'destination': destination,
+    });
+    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao calcular frete');
+    return (res['data'] as num).toDouble();
+  }
+}
