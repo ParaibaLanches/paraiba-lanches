@@ -1,14 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shimmer/shimmer.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/menu_controller.dart' as mc;
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/currency_formatter.dart';
-import '../../models/product.dart';
+import '../widgets/app_button.dart';
+import '../widgets/product_card.dart';
 
 class MenuView extends ConsumerWidget {
   const MenuView({super.key});
@@ -89,9 +88,22 @@ class MenuView extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => _ProductCard(
+                    (context, index) => ProductCard(
                       product: filtered[index],
-                      onAdd: () => cartNotifier.addProduct(filtered[index]),
+                      onAddTap: () {
+                        cartNotifier.addProduct(filtered[index]);
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${filtered[index].name} adicionado ao carrinho!'),
+                            duration: const Duration(seconds: 2),
+                            action: SnackBarAction(
+                              label: 'VER CARRINHO',
+                              onPressed: () => context.go('/cart'),
+                            ),
+                          ),
+                        );
+                      },
                       onTap: () => context.go('/product/${filtered[index].id}'),
                     ),
                     childCount: filtered.length,
@@ -113,95 +125,12 @@ class MenuView extends ConsumerWidget {
                 boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), offset: const Offset(0, -8), blurRadius: 24)],
               ),
               child: SafeArea(
-                child: SizedBox(
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: () => context.go('/cart'),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('${ref.read(cartProvider.notifier).itemCount} itens', style: AppTypography.labelLarge.copyWith(color: AppColors.onPrimary)),
-                        Text(CurrencyFormatter.format(ref.read(cartProvider.notifier).total), style: AppTypography.titleMedium.copyWith(color: AppColors.onPrimary)),
-                      ],
+                    child: AppButton(
+                      onPressed: () => context.go('/cart'),
+                      label: '${ref.read(cartProvider.notifier).itemCount} itens  •  ${CurrencyFormatter.format(ref.read(cartProvider.notifier).total)}',
                     ),
-                  ),
-                ),
               ),
             ),
-    );
-  }
-}
-
-class _ProductCard extends StatelessWidget {
-  final Product product;
-  final VoidCallback onAdd;
-  final VoidCallback onTap;
-
-  const _ProductCard({required this.product, required this.onAdd, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            // Product image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: SizedBox(
-                width: 80,
-                height: 80,
-                child: product.imageUrl.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: product.imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Shimmer.fromColors(
-                          baseColor: AppColors.surfaceContainerLow,
-                          highlightColor: AppColors.surfaceContainerLowest,
-                          child: Container(color: AppColors.surfaceContainerLow),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: AppColors.surfaceContainerLow,
-                          child: const Icon(Icons.lunch_dining, color: AppColors.onSurfaceVariant),
-                        ),
-                      )
-                    : Container(
-                        color: AppColors.surfaceContainerLow,
-                        child: const Icon(Icons.lunch_dining, color: AppColors.onSurfaceVariant),
-                      ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(product.name, style: AppTypography.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
-                  if (product.description.isNotEmpty)
-                    Text(product.description, style: AppTypography.bodySmall, maxLines: 2, overflow: TextOverflow.ellipsis),
-                  const SizedBox(height: 4),
-                  Text(CurrencyFormatter.format(product.price), style: AppTypography.headlineSmall.copyWith(color: AppColors.primary)),
-                ],
-              ),
-            ),
-            IconButton(
-              onPressed: onAdd,
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(8)),
-                child: const Icon(Icons.add, color: AppColors.onPrimary, size: 20),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -7,6 +7,8 @@ import '../../controllers/cart_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/currency_formatter.dart';
+import '../widgets/app_button.dart';
+import '../widgets/empty_state.dart';
 
 class CartView extends ConsumerWidget {
   const CartView({super.key});
@@ -28,17 +30,12 @@ class CartView extends ConsumerWidget {
         ],
       ),
       body: cart.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.shopping_cart_outlined, size: 64, color: AppColors.onSurfaceVariant),
-                  const SizedBox(height: 16),
-                  Text('Carrinho vazio', style: AppTypography.headlineMedium.copyWith(color: AppColors.onSurfaceVariant)),
-                  const SizedBox(height: 8),
-                  Text('Adicione itens do cardapio', style: AppTypography.bodyMedium.copyWith(color: AppColors.onSurfaceVariant)),
-                ],
-              ),
+          ? EmptyState(
+              icon: Icons.shopping_cart_outlined,
+              title: 'Carrinho vazio',
+              description: 'Adicione itens deliciosos do nosso cardápio para continuar.',
+              buttonLabel: 'Ir para o cardápio',
+              onButtonPressed: () => context.go('/menu'),
             )
           : Column(
               children: [
@@ -163,13 +160,9 @@ class CartView extends ConsumerWidget {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: ElevatedButton(
-                            onPressed: () => context.go('/checkout'),
-                            child: Text('Finalizar Pedido', style: AppTypography.labelLarge.copyWith(color: AppColors.onPrimary)),
-                          ),
+                        AppButton(
+                          label: 'Finalizar Pedido',
+                          onPressed: () => context.go('/checkout'),
                         ),
                       ],
                     ),

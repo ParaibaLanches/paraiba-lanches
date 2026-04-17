@@ -5,6 +5,8 @@ import '../../controllers/auth_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/validators.dart';
+import '../widgets/app_button.dart';
+import '../widgets/app_text_field.dart';
 
 class RegisterView extends ConsumerStatefulWidget {
   const RegisterView({super.key});
@@ -71,38 +73,34 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                 const SizedBox(height: 4),
                 Text('Crie sua conta para fazer pedidos', style: AppTypography.bodyMedium.copyWith(color: AppColors.onSurfaceVariant)),
                 const SizedBox(height: 32),
-                Text('NOME COMPLETO', style: AppTypography.labelMedium.copyWith(letterSpacing: 1.5)),
-                const SizedBox(height: 8),
-                TextFormField(
+                AppTextField(
+                  label: 'Nome Completo',
                   controller: _nameController,
-                  decoration: const InputDecoration(hintText: 'Seu nome'),
+                  hint: 'Seu nome',
                   validator: AppValidators.name,
                 ),
                 const SizedBox(height: 20),
-                Text('E-MAIL', style: AppTypography.labelMedium.copyWith(letterSpacing: 1.5)),
-                const SizedBox(height: 8),
-                TextFormField(
+                AppTextField(
+                  label: 'E-mail',
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(hintText: 'seu@email.com'),
+                  hint: 'seu@email.com',
                   validator: AppValidators.email,
                 ),
                 const SizedBox(height: 20),
-                Text('CELULAR', style: AppTypography.labelMedium.copyWith(letterSpacing: 1.5)),
-                const SizedBox(height: 8),
-                TextFormField(
+                AppTextField(
+                  label: 'Celular',
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(hintText: '(99) 99999-9999'),
+                  hint: '(99) 99999-9999',
                   validator: AppValidators.phone,
                 ),
                 const SizedBox(height: 20),
-                Text('SENHA', style: AppTypography.labelMedium.copyWith(letterSpacing: 1.5)),
-                const SizedBox(height: 8),
-                TextFormField(
+                AppTextField(
+                  label: 'Senha',
                   controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(hintText: 'Minimo 6 caracteres'),
+                  isPassword: true,
+                  hint: 'Minimo 6 caracteres',
                   validator: AppValidators.password,
                 ),
               if (authState.error != null) ...[
@@ -114,18 +112,10 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                 ),
               ],
               const SizedBox(height: 24),
-              SizedBox(
-                height: 56,
-                child: Container(
-                  decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(12)),
-                  child: ElevatedButton(
-                    onPressed: authState.isLoading ? null : _handleRegister,
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent),
-                    child: authState.isLoading
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : Text('CRIAR MINHA CONTA', style: AppTypography.labelLarge.copyWith(color: AppColors.onPrimary)),
-                  ),
-                ),
+              AppButton(
+                label: 'Criar minha conta',
+                isLoading: authState.isLoading,
+                onPressed: _handleRegister,
               ),
               ],
             ),

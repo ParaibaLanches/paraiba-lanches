@@ -5,6 +5,8 @@ import '../../controllers/auth_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/validators.dart';
+import '../widgets/app_button.dart';
+import '../widgets/app_text_field.dart';
 
 class LoginView extends ConsumerStatefulWidget {
   const LoginView({super.key});
@@ -75,38 +77,32 @@ class _LoginViewState extends ConsumerState<LoginView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text('E-MAIL', style: AppTypography.labelMedium.copyWith(letterSpacing: 1.5)),
-                    const SizedBox(height: 8),
-                    TextFormField(
+                    AppTextField(
+                      label: 'E-mail',
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(hintText: 'seu@email.com'),
+                      hint: 'seu@email.com',
                       validator: AppValidators.email,
                     ),
                     const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('SENHA', style: AppTypography.labelMedium.copyWith(letterSpacing: 1.5)),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Text('ESQUECI MINHA SENHA', style: AppTypography.labelSmall.copyWith(color: AppColors.primary)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
+                    AppTextField(
+                      label: 'Senha',
                       controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      decoration: InputDecoration(
-                        hintText: '********',
-                        suffixIcon: IconButton(
-                          icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, size: 20),
-                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                        ),
-                      ),
+                      isPassword: _obscurePassword,
+                      hint: '********',
                       validator: (value) => AppValidators.required(value, 'Senha'),
-                      onFieldSubmitted: (_) => _handleLogin(),
+                      onSubmitted: (_) => _handleLogin(),
+                      suffixIcon: IconButton(
+                        icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, size: 20),
+                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text('ESQUECI MINHA SENHA', style: AppTypography.labelSmall.copyWith(color: AppColors.primary)),
+                      ),
                     ),
                   ],
                 ),
@@ -123,14 +119,10 @@ class _LoginViewState extends ConsumerState<LoginView> {
                 ),
               ],
               const SizedBox(height: 24),
-              SizedBox(
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: authState.isLoading ? null : _handleLogin,
-                  child: authState.isLoading
-                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                      : Text('ACESSAR MINHA CONTA', style: AppTypography.labelLarge.copyWith(color: AppColors.onPrimary)),
-                ),
+              AppButton(
+                label: 'Acessar minha conta',
+                isLoading: authState.isLoading,
+                onPressed: _handleLogin,
               ),
               const SizedBox(height: 24),
               Row(

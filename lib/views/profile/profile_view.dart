@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../controllers/auth_controller.dart';
+import '../../core/constants/api_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/validators.dart';
+import '../widgets/app_button.dart';
+import '../widgets/app_text_field.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
@@ -65,6 +69,20 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     _documentController.text = user.document.isEmpty ? '000.000.000-00' : user.document;
   }
 
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 512,
+      maxHeight: 512,
+      imageQuality: 75,
+    );
+
+    if (image != null) {
+      await ref.read(authControllerProvider.notifier).updateAvatar(image.path);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
@@ -77,6 +95,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     if (!_isEditing) {
       _loadUserData(user);
     }
+
+    final avatarUrl = ApiConstants.getImageUrl(user.avatarUrl);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -99,66 +119,76 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             children: [
             // Avatar Section
             Center(
-              child: Stack(
-                children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerHigh,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.primary, width: 2),
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      size: 64,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  if (_isEditing)
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                        child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+              child: GestureDetector(
+                onTap: _isEditing ? _pickImage : null,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceContainerHigh,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.primary, width: 2),
+                        image: avatarUrl != null 
+                          ? DecorationImage(
+                              image: NetworkImage(avatarUrl),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
                       ),
+                      child: avatarUrl == null 
+                        ? const Icon(
+                            Icons.person,
+                            size: 64,
+                            color: AppColors.primary,
+                          )
+                        : null,
                     ),
-                ],
+                    if (_isEditing)
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+                          child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 32),
 
-            // Form Fields
-            _ProfileField(
+            AppTextField(
               label: 'Nome Completo',
               controller: _nameController,
-              isEditing: _isEditing,
+              enabled: _isEditing,
               hint: 'Seu nome completo',
               validator: AppValidators.name,
             ),
             const SizedBox(height: 16),
-            _ProfileField(
+            AppTextField(
               label: 'E-mail',
-              value: user.email,
-              isEditing: false, // E-mail costuma ser imutável
+              hint: user.email,
+              enabled: false,
             ),
             const SizedBox(height: 16),
-            _ProfileField(
+            AppTextField(
               label: 'Telefone',
               controller: _phoneController,
-              isEditing: _isEditing,
+              enabled: _isEditing,
               hint: '(00) 00000-0000',
               inputFormatters: [_phoneFormatter],
               keyboardType: TextInputType.phone,
               validator: AppValidators.phone,
             ),
             const SizedBox(height: 16),
-            _ProfileField(
+            AppTextField(
               label: 'CPF',
               controller: _documentController,
-              isEditing: _isEditing,
+              enabled: _isEditing,
               hint: '000.000.000-00',
               inputFormatters: [_cpfCnpjFormatter],
               keyboardType: TextInputType.number,
@@ -166,57 +196,42 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             ),
             const SizedBox(height: 32),
 
-            // Buttons
             if (!_isEditing) ...[
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => setState(() => _isEditing = true),
-                  child: const Text('EDITAR PERFIL'),
-                ),
+              AppButton(
+                label: 'Editar perfil',
+                onPressed: () => setState(() => _isEditing = true),
               ),
             ] else ...[
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: authState.isLoading ? null : () async {
-                    if (!_formKey.currentState!.validate()) return;
-                    final messenger = ScaffoldMessenger.of(context);
-                    final formattedName = _formatName(_nameController.text);
-                    await ref.read(authControllerProvider.notifier).updateProfile(
-                      name: formattedName,
-                      phone: _phoneController.text,
-                      document: _documentController.text,
+              AppButton(
+                label: 'Salvar alterações',
+                isLoading: authState.isLoading,
+                onPressed: () async {
+                  if (!_formKey.currentState!.validate()) return;
+                  final messenger = ScaffoldMessenger.of(context);
+                  final formattedName = _formatName(_nameController.text);
+                  await ref.read(authControllerProvider.notifier).updateProfile(
+                    name: formattedName,
+                    phone: _phoneController.text,
+                    document: _documentController.text,
+                  );
+                  if (!mounted) return;
+                  final error = ref.read(authControllerProvider).error;
+                  if (error == null) {
+                    setState(() => _isEditing = false);
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('Perfil atualizado com sucesso!')),
                     );
-                    if (!mounted) return;
-                    final error = ref.read(authControllerProvider).error;
-                    if (error == null) {
-                      setState(() => _isEditing = false);
-                      messenger.showSnackBar(
-                        const SnackBar(content: Text('Perfil atualizado com sucesso!')),
-                      );
-                    }
-                  },
-                  child: authState.isLoading 
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : const Text('SALVAR ALTERAÇÕES'),
-                ),
+                  }
+                },
               ),
             ],
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: (_isEditing || authState.isLoading) 
-                  ? null 
-                  : () => ref.read(authControllerProvider.notifier).logout(),
-                child: Text(
-                  'SAIR DA CONTA',
-                  style: AppTypography.labelLarge.copyWith(
-                    color: (_isEditing || authState.isLoading) ? AppColors.outline : AppColors.error,
-                  ),
-                ),
-              ),
+            AppButton(
+              label: 'Sair da conta',
+              isSecondary: true,
+              onPressed: (_isEditing || authState.isLoading) 
+                ? null 
+                : () => ref.read(authControllerProvider.notifier).logout(),
             ),
             if (authState.error != null) ...[
               const SizedBox(height: 16),
@@ -230,76 +245,6 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _ProfileField extends StatelessWidget {
-  final String label;
-  final String? value;
-  final TextEditingController? controller;
-  final bool isEditing;
-  final String? hint;
-  final List<TextInputFormatter>? inputFormatters;
-  final TextInputType? keyboardType;
-  final String? Function(String?)? validator;
-
-  const _ProfileField({
-    required this.label,
-    this.value,
-    this.controller,
-    required this.isEditing,
-    this.hint,
-    this.inputFormatters,
-    this.keyboardType,
-    this.validator,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label.toUpperCase(),
-          style: AppTypography.labelSmall.copyWith(
-            color: AppColors.onSurfaceVariant,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.2,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          enabled: isEditing && controller != null,
-          initialValue: controller == null ? value : null,
-          inputFormatters: inputFormatters,
-          keyboardType: keyboardType,
-          validator: isEditing ? validator : null,
-          style: AppTypography.bodyLarge.copyWith(
-            fontWeight: FontWeight.w600,
-            color: isEditing ? AppColors.onSurface : AppColors.onSurface.withValues(alpha: 0.7),
-          ),
-          decoration: InputDecoration(
-            hintText: hint,
-            filled: true,
-            fillColor: isEditing ? AppColors.surfaceContainerLow : AppColors.surfaceContainerLow.withValues(alpha: 0.5),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
-            ),
-            contentPadding: const EdgeInsets.all(16),
-          ),
-        ),
-      ],
     );
   }
 }
