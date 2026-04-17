@@ -11,9 +11,11 @@ class ApiConstants {
   static const login = '/api/customer/login';
   static const register = '/api/customer/register';
   static const profile = '/api/customer/profile';
+  static const updateAvatar = '/api/customer/profile/image';
   static const refresh = '/api/auth/refresh';
 
   // Menu
+  static const home = '/api/customer/home';
   static const menu = '/api/customer/menu';
 
   // Orders

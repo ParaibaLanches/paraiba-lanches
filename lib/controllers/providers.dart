@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
 import '../services/coupon_service.dart';
+import '../services/merchandising_service.dart';
 import '../services/menu_service.dart';
 import '../services/order_service.dart';
 import '../services/settings_service.dart';
@@ -31,8 +32,16 @@ final settingsServiceProvider = Provider<SettingsService>((ref) {
   return SettingsService(ref.read(apiServiceProvider));
 });
 
+final merchandisingServiceProvider = Provider<MerchandisingService>((ref) {
+  return MerchandisingService(ref.read(apiServiceProvider));
+});
+
 final appInfoProvider = FutureProvider<AppInfo>((ref) async {
   return ref.read(settingsServiceProvider).getAppInfo();
+});
+
+final homeDataProvider = FutureProvider((ref) async {
+  return ref.read(merchandisingServiceProvider).getHomeData();
 });
 
 final wsServiceProvider = Provider<WebSocketService>((ref) {
