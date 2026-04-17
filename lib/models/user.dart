@@ -5,6 +5,7 @@ class CustomerProfile {
   final String phone;
   final String document;
   final String address;
+  final String avatarUrl;
 
   CustomerProfile({
     required this.id,
@@ -13,6 +14,7 @@ class CustomerProfile {
     this.phone = '',
     this.document = '',
     this.address = '',
+    this.avatarUrl = '',
   });
 
   factory CustomerProfile.fromJson(Map<String, dynamic> json) => CustomerProfile(
@@ -22,6 +24,7 @@ class CustomerProfile {
         phone: json['phone'] as String? ?? '',
         document: json['document'] as String? ?? '',
         address: json['address'] as String? ?? '',
+        avatarUrl: json['avatar_url'] as String? ?? '',
       );
 }
 

@@ -56,6 +56,12 @@ class AuthService {
     if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao atualizar');
   }
 
+  Future<String> updateAvatar(String filePath) async {
+    final res = await _api.upload(ApiConstants.updateAvatar, filePath, fileKey: 'image');
+    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao enviar imagem');
+    return res['data']['avatar_url'] as String;
+  }
+
   Future<void> logout() async {
     await TokenStorage.clearTokens();
   }
