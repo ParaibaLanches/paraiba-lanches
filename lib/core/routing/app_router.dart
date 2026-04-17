@@ -12,15 +12,20 @@ import '../../views/orders/orders_view.dart';
 import '../../views/profile/profile_view.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final isAuth = ref.watch(authControllerProvider.select((state) => state.isAuthenticated));
+  final notifier = RouterNotifier(ref);
 
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/home',
+    refreshListenable: notifier,
     redirect: (context, state) {
+      final authState = ref.read(authControllerProvider);
+      final isAuth = authState.isAuthenticated;
+
       final isAuthRoute = state.uri.path == '/login' || state.uri.path == '/register';
 
       if (!isAuth && !isAuthRoute) return '/login';
       if (isAuth && isAuthRoute) return '/home';
+
       return null;
     },
     routes: [
@@ -40,6 +45,17 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+class RouterNotifier extends ChangeNotifier {
+  final Ref _ref;
+
+  RouterNotifier(this._ref) {
+    _ref.listen(
+      authControllerProvider,
+      (_, __) => notifyListeners(),
+    );
+  }
+}
 
 class _AppShell extends StatelessWidget {
   final Widget child;

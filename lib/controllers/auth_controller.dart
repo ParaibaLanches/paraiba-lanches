@@ -5,15 +5,17 @@ import 'providers.dart';
 class AuthState {
   final CustomerProfile? user;
   final bool isLoading;
+  final bool isInitialized;
   final bool isAuthenticated;
   final String? error;
 
-  const AuthState({this.user, this.isLoading = false, this.isAuthenticated = false, this.error});
+  const AuthState({this.user, this.isLoading = false, this.isInitialized = false, this.isAuthenticated = false, this.error});
 
-  AuthState copyWith({CustomerProfile? user, bool? isLoading, bool? isAuthenticated, String? error}) {
+  AuthState copyWith({CustomerProfile? user, bool? isLoading, bool? isInitialized, bool? isAuthenticated, String? error}) {
     return AuthState(
       user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
+      isInitialized: isInitialized ?? this.isInitialized,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       error: error,
     );
@@ -52,12 +54,16 @@ class AuthController extends Notifier<AuthState> {
 
   Future<void> loadSession() async {
     final isLoggedIn = await ref.read(authServiceProvider).isLoggedIn();
-    if (!isLoggedIn) return;
+    if (!isLoggedIn) {
+      state = state.copyWith(isInitialized: true);
+      return;
+    }
     try {
       final profile = await ref.read(authServiceProvider).getProfile();
-      state = state.copyWith(user: profile, isAuthenticated: true);
+      state = state.copyWith(user: profile, isAuthenticated: true, isInitialized: true);
     } catch (_) {
       await ref.read(authServiceProvider).logout();
+      state = state.copyWith(isInitialized: true);
     }
   }
 
@@ -75,6 +81,17 @@ class AuthController extends Notifier<AuthState> {
         document: document,
         address: address,
       );
+      final profile = await ref.read(authServiceProvider).getProfile();
+      state = state.copyWith(user: profile, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString().replaceAll('Exception: ', ''));
+    }
+  }
+
+  Future<void> updateAvatar(String filePath) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await ref.read(authServiceProvider).updateAvatar(filePath);
       final profile = await ref.read(authServiceProvider).getProfile();
       state = state.copyWith(user: profile, isLoading: false);
     } catch (e) {

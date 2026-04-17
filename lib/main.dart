@@ -9,7 +9,23 @@ import 'core/theme/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  runApp(const ProviderScope(child: ParaibaLanchesApp()));
+  
+  // Criamos o container antes para carregar a sessão
+  final container = ProviderContainer();
+  
+  try {
+    // Aguardamos a sessão ser carregada antes de iniciar o app
+    await container.read(authControllerProvider.notifier).loadSession();
+  } catch (e) {
+    debugPrint('Erro ao carregar sessão inicial: $e');
+  }
+
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: const ParaibaLanchesApp(),
+    ),
+  );
 }
 
 class ParaibaLanchesApp extends ConsumerStatefulWidget {
@@ -20,12 +36,6 @@ class ParaibaLanchesApp extends ConsumerStatefulWidget {
 }
 
 class _ParaibaLanchesAppState extends ConsumerState<ParaibaLanchesApp> {
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() => ref.read(authControllerProvider.notifier).loadSession());
-  }
-
   @override
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
