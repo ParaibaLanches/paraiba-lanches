@@ -22,6 +22,8 @@ class Product {
   final String imageUrl;
   final bool isFeatured;
   final String featuredSlot;
+  final String promotionLabel;
+  final double? discountPercentage;
   final double? promotionalPrice;
   final bool available;
 
@@ -35,6 +37,8 @@ class Product {
     this.imageUrl = '',
     this.isFeatured = false,
     this.featuredSlot = 'none',
+    this.promotionLabel = '',
+    this.discountPercentage,
     this.promotionalPrice,
     this.available = true,
   });
@@ -49,6 +53,8 @@ class Product {
         imageUrl: json['image_url'] as String? ?? '',
         isFeatured: json['is_featured'] as bool? ?? false,
         featuredSlot: json['featured_slot'] as String? ?? 'none',
+        promotionLabel: json['promotion_label'] as String? ?? '',
+        discountPercentage: json['discount_percentage'] != null ? (json['discount_percentage'] as num).toDouble() : null,
         promotionalPrice: json['promotional_price'] != null ? (json['promotional_price'] as num).toDouble() : null,
         available: json['available'] as bool? ?? true,
       );
