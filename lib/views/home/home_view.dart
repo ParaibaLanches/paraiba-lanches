@@ -42,246 +42,309 @@ class HomeView extends ConsumerWidget {
       );
     }
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: CustomScrollView(
-        slivers: [
-          // Custom Header
-          SliverAppBar(
-            floating: true,
-            pinned: true,
-            expandedHeight: 100,
-            toolbarHeight: 64,
-            backgroundColor: AppColors.background.withValues(alpha: 0.9),
-            surfaceTintColor: Colors.transparent,
-            flexibleSpace: FlexibleSpaceBar(
-              background: SafeArea(
+    return Material(
+      color: AppColors.background,
+      child: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              // Custom Header
+              SliverAppBar(
+                floating: true,
+                pinned: true,
+                expandedHeight: 82,
+                toolbarHeight: 64,
+                backgroundColor: AppColors.background.withValues(alpha: 0.9),
+                surfaceTintColor: Colors.transparent,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 64, 20, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          appInfoAsync.when(
+                            data: (info) => Text(
+                              info.description,
+                              style: AppTypography.bodySmall.copyWith(
+                                color: AppColors.outline,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            loading: () => const SizedBox(),
+                            error: (_, _) => Text(
+                              'Hambúrgueres Artesanais 🍔',
+                              style: AppTypography.bodySmall.copyWith(
+                                color: AppColors.outline,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                title: Row(
+                  children: [
+                    appInfoAsync.when(
+                      data: (info) =>
+                          info.logoUrl != null && info.logoUrl!.isNotEmpty
+                          ? SizedBox(
+                              height: 32,
+                              width: 32,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: CachedNetworkImage(
+                                  imageUrl: ApiConstants.getImageUrl(
+                                    info.logoUrl,
+                                  )!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          : const Icon(
+                              Icons.lunch_dining,
+                              size: 28,
+                              color: AppColors.primary,
+                            ),
+                      loading: () => const SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      error: (_, _) => const Icon(
+                        Icons.lunch_dining,
+                        size: 28,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    appInfoAsync.when(
+                      data: (info) => Text(
+                        info.appName,
+                        style: AppTypography.headlineLarge.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -1,
+                        ),
+                      ),
+                      loading: () => const Text('Carregando...'),
+                      error: (_, _) => const Text('Paraíba Lanches'),
+                    ),
+                  ],
+                ),
+                actions: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.shopping_cart_outlined,
+                          color: AppColors.primary,
+                        ),
+                        onPressed: () => context.go('/cart'),
+                      ),
+                      if (cart.isNotEmpty)
+                        Positioned(
+                          right: 4,
+                          top: 4,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              '${cartNotifier.itemCount}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.search, color: AppColors.primary),
+                    onPressed: () {},
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              ),
+              // Merchandising Sections (Dynamic)
+              ref
+                  .watch(homeDataProvider)
+                  .when(
+                    data: (sections) => SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 4),
+                            ...sections.map(
+                              (section) => SectionFactory(
+                                section: section,
+                                onAddTap: addToCart,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    loading: () => const SliverToBoxAdapter(
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(32),
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ),
+                    error: (err, stack) => SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 40,
+                        ),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                size: 48,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Não foi possível carregar os destaques.\n$err',
+                                textAlign: TextAlign.center,
+                                style: AppTypography.bodySmall,
+                              ),
+                              TextButton(
+                                onPressed: () => ref.refresh(homeDataProvider),
+                                child: const Text('Tentar novamente'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+              // Search, Categories and General List (Fixed atbottom)
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 64, 20, 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      appInfoAsync.when(
-                        data: (info) => Text(
-                          info.description,
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.outline,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        loading: () => const SizedBox(),
-                        error: (_, _) => Text(
-                          'Os Brutos de Cabedelo 🍔',
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.outline,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                      const SizedBox(height: 8),
+                      _CategoriesBar(
+                        categoriesAsync: categoriesAsync,
+                        selectedId: selectedCategory,
+                        onSelect: (id) => ref
+                            .read(mc.selectedCategoryProvider.notifier)
+                            .select(id),
                       ),
+                      const SizedBox(height: 6),
+                      const SectionHeader(
+                        title: 'Nosso Cardápio Completo',
+                        subtitle: 'Tudo o que você precisa',
+                      ),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
               ),
-            ),
-            title: Row(
-              children: [
-                appInfoAsync.when(
-                  data: (info) => info.logoUrl != null && info.logoUrl!.isNotEmpty
-                      ? SizedBox(
-                          height: 32,
-                          width: 32,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              imageUrl: ApiConstants.getImageUrl(info.logoUrl)!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        )
-                      : const Icon(Icons.lunch_dining, size: 28, color: AppColors.primary),
-                  loading: () => const SizedBox(width: 28, height: 28, child: CircularProgressIndicator(strokeWidth: 2)),
-                  error: (_, _) => const Icon(Icons.lunch_dining, size: 28, color: AppColors.primary),
-                ),
-                const SizedBox(width: 12),
-                appInfoAsync.when(
-                  data: (info) => Text(
-                    info.appName,
-                    style: AppTypography.headlineLarge.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -1,
+
+              // Menu Items List
+              menuAsync.when(
+                loading: () => const SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(40),
+                      child: CircularProgressIndicator(),
                     ),
                   ),
-                  loading: () => const Text('Carregando...'),
-                  error: (_, _) => const Text('Paraíba Lanches'),
                 ),
-              ],
-            ),
-            actions: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.shopping_cart_outlined, color: AppColors.primary),
-                    onPressed: () => context.go('/cart'),
+                error: (err, _) => SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text('Erro ao carregar cardápio: $err'),
+                    ),
                   ),
-                  if (cart.isNotEmpty)
-                    Positioned(
-                      right: 4,
-                      top: 4,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
+                ),
+                data: (products) {
+                  final filtered = selectedCategory == null
+                      ? products
+                      : products
+                            .where((p) => p.categoryId == selectedCategory)
+                            .toList();
+
+                  return SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => ProductCard(
+                          product: filtered[index],
+                          onAddTap: () => addToCart(filtered[index]),
                         ),
-                        child: Text(
-                          '${cartNotifier.itemCount}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        childCount: filtered.length,
                       ),
                     ),
-                ],
+                  );
+                },
               ),
-              IconButton(
-                icon: const Icon(Icons.search, color: AppColors.primary),
-                onPressed: () {},
-              ),
-              const SizedBox(width: 8),
             ],
           ),
-
-          // Merchandising Sections (Dynamic)
-          ref.watch(homeDataProvider).when(
-            data: (sections) => SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 4),
-                    ...sections.map((section) => SectionFactory(
-                      section: section,
-                      onAddTap: addToCart,
-                    )),
+          if (cart.isNotEmpty)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceContainerLowest.withValues(
+                    alpha: 0.95,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      offset: const Offset(0, -8),
+                      blurRadius: 24,
+                    ),
                   ],
                 ),
-              ),
-            ),
-            loading: () => const SliverToBoxAdapter(
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.all(32),
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            ),
-            error: (err, stack) => SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                child: Center(
-                  child: Column(
-                    children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.grey),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Não foi possível carregar os destaques.\n$err',
-                        textAlign: TextAlign.center,
-                        style: AppTypography.bodySmall,
-                      ),
-                      TextButton(
-                        onPressed: () => ref.refresh(homeDataProvider),
-                        child: const Text('Tentar novamente'),
-                      ),
-                    ],
+                child: SafeArea(
+                  top: false,
+                  child: AppButton(
+                    onPressed: () => context.go('/cart'),
+                    label:
+                        '${cartNotifier.itemCount} itens  •  ${CurrencyFormatter.format(cartNotifier.total)}',
                   ),
                 ),
               ),
             ),
-          ),
-
-          // Search, Categories and General List (Fixed atbottom)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
-                  _CategoriesBar(
-                    categoriesAsync: categoriesAsync,
-                    selectedId: selectedCategory,
-                    onSelect: (id) => ref.read(mc.selectedCategoryProvider.notifier).select(id),
-                  ),
-                  const SizedBox(height: 32),
-                  const SectionHeader(title: 'Nosso Cardápio Completo', subtitle: 'Tudo o que você precisa'),
-                  const SizedBox(height: 16),
-                ],
-              ),
-            ),
-          ),
-
-          // Menu Items List
-          menuAsync.when(
-            loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-            error: (_, _) => const SliverToBoxAdapter(child: SizedBox.shrink()),
-            data: (products) {
-              final filtered = selectedCategory == null 
-                  ? products 
-                  : products.where((p) => p.categoryId == selectedCategory).toList();
-              
-              return SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => ProductCard(
-                      product: filtered[index],
-                      onAddTap: () => addToCart(filtered[index]),
-                    ),
-                    childCount: filtered.length,
-                  ),
-                ),
-              );
-            },
-          ),
         ],
       ),
-      bottomSheet: cart.isEmpty
-          ? null
-          : Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceContainerLowest,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    offset: const Offset(0, -8),
-                    blurRadius: 24,
-                  )
-                ],
-              ),
-              child: SafeArea(
-                child: AppButton(
-                  onPressed: () => context.go('/cart'),
-                  label: '${cartNotifier.itemCount} itens  •  ${CurrencyFormatter.format(cartNotifier.total)}',
-                ),
-              ),
-            ),
     );
   }
 }
-
-// Widgets _HeroSection e _BentoGrid foram removidos pois foram migrados para o sistema dinâmico
 
 class _CategoriesBar extends StatelessWidget {
   final AsyncValue categoriesAsync;
   final int? selectedId;
   final Function(int?) onSelect;
 
-  const _CategoriesBar({required this.categoriesAsync, required this.selectedId, required this.onSelect});
+  const _CategoriesBar({
+    required this.categoriesAsync,
+    required this.selectedId,
+    required this.onSelect,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -290,6 +353,8 @@ class _CategoriesBar extends StatelessWidget {
       error: (_, _) => const SizedBox(),
       data: (categories) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
             _CategoryChip(
@@ -297,11 +362,13 @@ class _CategoriesBar extends StatelessWidget {
               isSelected: selectedId == null,
               onTap: () => onSelect(null),
             ),
-            ...categories.map((cat) => _CategoryChip(
-                  label: cat.name[0].toUpperCase() + cat.name.substring(1),
-                  isSelected: selectedId == cat.id,
-                  onTap: () => onSelect(cat.id),
-                )),
+            ...categories.map(
+              (cat) => _CategoryChip(
+                label: cat.name[0].toUpperCase() + cat.name.substring(1),
+                isSelected: selectedId == cat.id,
+                onTap: () => onSelect(cat.id),
+              ),
+            ),
           ],
         ),
       ),
@@ -314,7 +381,11 @@ class _CategoryChip extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _CategoryChip({required this.label, required this.isSelected, required this.onTap});
+  const _CategoryChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -326,10 +397,18 @@ class _CategoryChip extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary : AppColors.surfaceContainerHigh,
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(30),
-            boxShadow: isSelected 
-                ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 4))] 
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
                 : null,
           ),
           child: Text(

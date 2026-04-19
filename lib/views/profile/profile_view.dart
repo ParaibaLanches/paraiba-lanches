@@ -64,9 +64,13 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
   void _loadUserData(dynamic user) {
     _nameController.text = _formatName(user.name);
-    // Apply defaults if empty
-    _phoneController.text = user.phone.isEmpty ? '(00) 00000-0000' : user.phone;
-    _documentController.text = user.document.isEmpty ? '000.000.000-00' : user.document;
+    // Apply masks when loading data
+    _phoneController.text = user.phone.isEmpty 
+        ? '(00) 00000-0000' 
+        : _phoneFormatter.maskText(user.phone);
+    _documentController.text = user.document.isEmpty 
+        ? '000.000.000-00' 
+        : _cpfCnpjFormatter.maskText(user.document);
   }
 
   Future<void> _pickImage() async {

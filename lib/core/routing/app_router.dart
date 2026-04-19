@@ -20,9 +20,14 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authControllerProvider);
       final isAuth = authState.isAuthenticated;
+      final isInitialized = authState.isInitialized;
+
+      // Do nothing if not initialized to avoid flickering or incorrect redirects
+      if (!isInitialized) return null;
 
       final isAuthRoute = state.uri.path == '/login' || state.uri.path == '/register';
 
+      if (state.uri.path == '/') return '/home';
       if (!isAuth && !isAuthRoute) return '/login';
       if (isAuth && isAuthRoute) return '/home';
 
@@ -52,7 +57,7 @@ class RouterNotifier extends ChangeNotifier {
   RouterNotifier(this._ref) {
     _ref.listen(
       authControllerProvider,
-      (_, __) => notifyListeners(),
+      (_, _) => notifyListeners(),
     );
   }
 }

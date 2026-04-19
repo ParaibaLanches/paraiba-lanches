@@ -42,7 +42,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
     final authState = ref.watch(authControllerProvider);
 
     ref.listen(authControllerProvider, (prev, next) {
-      if (next.isAuthenticated) context.go('/menu');
+      if (next.isAuthenticated) context.go('/home');
     });
 
     return Scaffold(

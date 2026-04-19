@@ -60,7 +60,7 @@ class DynamicBentoSection extends StatelessWidget {
             onAddTap: () => onAddTap(item2),
           ),
         ],
-        const SizedBox(height: 32),
+        const SizedBox(height: 12),
       ],
     );
   }

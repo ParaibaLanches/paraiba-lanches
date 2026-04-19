@@ -26,7 +26,7 @@ class DynamicHeroSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 380,
-      margin: const EdgeInsets.only(bottom: 32),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppColors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(36),

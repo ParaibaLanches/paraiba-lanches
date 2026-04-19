@@ -53,16 +53,20 @@ class AppTextField extends StatelessWidget {
           onFieldSubmitted: onSubmitted,
           style: AppTypography.bodyLarge.copyWith(
             fontWeight: FontWeight.w600,
-            color: enabled ? AppColors.onSurface : AppColors.onSurface.withValues(alpha: 0.7),
+            color: enabled ? AppColors.onSurface : AppColors.onSurfaceVariant.withValues(alpha: 0.6),
           ),
           decoration: InputDecoration(
             hintText: hint,
+            hintStyle: AppTypography.bodyLarge.copyWith(
+              fontWeight: FontWeight.w600,
+              color: AppColors.onSurfaceVariant.withValues(alpha: 0.6),
+            ),
             suffixIcon: suffixIcon,
             filled: true,
-            fillColor: enabled ? AppColors.surfaceContainerLow : AppColors.surfaceContainerLow.withValues(alpha: 0.5),
+            fillColor: enabled ? AppColors.surfaceContainerLow : AppColors.surfaceContainer,
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),

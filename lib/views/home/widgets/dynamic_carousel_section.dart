@@ -45,7 +45,7 @@ class DynamicCarouselSection extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 12),
       ],
     );
   }

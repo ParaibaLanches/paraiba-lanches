@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user.dart';
 import 'providers.dart';
@@ -61,15 +62,16 @@ class AuthController extends Notifier<AuthState> {
     try {
       final profile = await ref.read(authServiceProvider).getProfile();
       state = state.copyWith(user: profile, isAuthenticated: true, isInitialized: true);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[Auth] Erro ao carregar perfil: $e');
       await ref.read(authServiceProvider).logout();
-      state = state.copyWith(isInitialized: true);
+      state = state.copyWith(isInitialized: true, isAuthenticated: false);
     }
   }
 
   Future<void> logout() async {
     await ref.read(authServiceProvider).logout();
-    state = const AuthState();
+    state = const AuthState(isInitialized: true);
   }
 
   Future<void> updateProfile({String? name, String? phone, String? document, String? address}) async {
