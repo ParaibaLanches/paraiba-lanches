@@ -6,7 +6,7 @@ import '../../widgets/section_header.dart';
 
 class DynamicCarouselSection extends StatelessWidget {
   final MerchandisingSection section;
-  final Function(Product) onAddTap;
+  final Function(Product, GlobalKey) onAddTap;
 
   const DynamicCarouselSection({
     super.key,
@@ -39,7 +39,7 @@ class DynamicCarouselSection extends StatelessWidget {
                 margin: const EdgeInsets.only(right: 16),
                 child: ProductCard(
                   product: product,
-                  onAddTap: () => onAddTap(product),
+                  onAddTap: (key) => onAddTap(product, key),
                 ),
               );
             },

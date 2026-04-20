@@ -7,7 +7,7 @@ import 'dynamic_hero_section.dart';
 
 class SectionFactory extends StatelessWidget {
   final MerchandisingSection section;
-  final Function(Product) onAddTap;
+  final Function(Product, GlobalKey) onAddTap;
 
   const SectionFactory({
     super.key,

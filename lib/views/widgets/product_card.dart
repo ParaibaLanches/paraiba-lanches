@@ -8,10 +8,11 @@ import '../../models/product.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
-  final VoidCallback? onAddTap;
+  final Function(GlobalKey)? onAddTap;
   final VoidCallback? onTap;
+  final GlobalKey addButtonKey = GlobalKey();
 
-  const ProductCard({
+  ProductCard({
     super.key,
     required this.product,
     this.onAddTap,
@@ -96,7 +97,8 @@ class ProductCard extends StatelessWidget {
               ),
             ),
             IconButton(
-              onPressed: onAddTap,
+              key: addButtonKey,
+              onPressed: () => onAddTap?.call(addButtonKey),
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(

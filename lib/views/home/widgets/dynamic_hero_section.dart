@@ -9,9 +9,10 @@ import '../../../models/merchandising_section.dart';
 
 class DynamicHeroSection extends StatelessWidget {
   final MerchandisingSection section;
-  final Function(Product) onAddTap;
+  final Function(Product, GlobalKey) onAddTap;
+  final GlobalKey addButtonKey = GlobalKey();
 
-  const DynamicHeroSection({
+  DynamicHeroSection({
     super.key,
     required this.section,
     required this.onAddTap,
@@ -120,7 +121,8 @@ class DynamicHeroSection extends StatelessWidget {
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton(
-                      onPressed: () => onAddTap(heroProduct),
+                      key: addButtonKey,
+                      onPressed: () => onAddTap(heroProduct, addButtonKey),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

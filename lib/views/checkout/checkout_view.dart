@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../controllers/auth_controller.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/checkout_controller.dart';
 import '../../controllers/providers.dart';
@@ -17,7 +18,6 @@ class CheckoutView extends ConsumerStatefulWidget {
 
 class _CheckoutViewState extends ConsumerState<CheckoutView> {
   final _couponController = TextEditingController();
-  final _addressController = TextEditingController();
   String _orderType = 'local';
   String _paymentMethod = 'pix';
   bool _isSubmitting = false;
@@ -25,7 +25,6 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
   @override
   void dispose() {
     _couponController.dispose();
-    _addressController.dispose();
     super.dispose();
   }
 
@@ -54,8 +53,7 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
     }
   }
 
-  Future<void> _handleCalculateDelivery() async {
-    final address = _addressController.text.trim();
+  Future<void> _handleCalculateDelivery(String address) async {
     if (address.isEmpty || _orderType != 'delivery') return;
 
     final checkoutNotifier = ref.read(checkoutProvider.notifier);
@@ -79,11 +77,12 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
     final cartItems = ref.read(cartProvider);
     final checkoutState = ref.read(checkoutProvider);
     final cartNotifier = ref.read(cartProvider.notifier);
+    final user = ref.read(authControllerProvider).user;
     if (cartItems.isEmpty) return;
 
-    if (_orderType == 'delivery' && _addressController.text.trim().isEmpty) {
+    if (_orderType == 'delivery' && (user?.address ?? '').isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, informe o endereço de entrega'), backgroundColor: AppColors.error),
+        const SnackBar(content: Text('Por favor, cadastre um endereço no seu perfil'), backgroundColor: AppColors.error),
       );
       return;
     }
@@ -95,7 +94,7 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
             paymentMethod: _paymentMethod,
             paymentAmount: checkoutState.calculateTotal(cartNotifier.total),
             orderType: _orderType,
-            notes: _orderType == 'delivery' ? 'Endereço: ${_addressController.text}' : '',
+            notes: _orderType == 'delivery' ? 'Endereço: ${user?.address}' : '',
           );
       cartNotifier.clear();
       ref.read(checkoutProvider.notifier).setCoupon(null);
@@ -148,7 +147,12 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
                   selected: _orderType,
                   onTap: (v) {
                     setState(() => _orderType = v);
-                    if (v != 'delivery') {
+                    if (v == 'delivery') {
+                      final userAddress = ref.read(authControllerProvider).user?.address;
+                      if (userAddress != null && userAddress.isNotEmpty) {
+                        _handleCalculateDelivery(userAddress);
+                      }
+                    } else {
                       ref.read(checkoutProvider.notifier).setDeliveryFee(0);
                     }
                   },
@@ -161,20 +165,79 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
             ),
             if (_orderType == 'delivery') ...[
               const SizedBox(height: 16),
-              TextField(
-                controller: _addressController,
-                decoration: InputDecoration(
-                  labelText: 'Endereço Completo',
-                  hintText: 'Rua, Número, Bairro, Cidade',
-                  prefixIcon: const Icon(Icons.location_on_outlined),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calculate_outlined),
-                    tooltip: 'Calcular Frete',
-                    onPressed: _handleCalculateDelivery,
-                  ),
-                ),
-                onSubmitted: (_) => _handleCalculateDelivery(),
+              Consumer(
+                builder: (context, ref, _) {
+                  final user = ref.watch(authControllerProvider).user;
+                  final address = user?.address ?? '';
+
+                  if (address.isEmpty) {
+                    return Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColors.errorContainer.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.warning_amber_rounded, color: AppColors.error),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  'Nenhum endereço cadastrado.',
+                                  style: AppTypography.bodyMedium.copyWith(color: AppColors.error),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton(
+                              onPressed: () => context.go('/profile'),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: AppColors.error),
+                                foregroundColor: AppColors.error,
+                              ),
+                              child: const Text('ADICIONAR ENDEREÇO NO PERFIL'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.location_on, color: AppColors.primary),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('ENTREGAR EM:', style: AppTypography.labelSmall.copyWith(color: AppColors.onSurfaceVariant)),
+                              Text(address, style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.refresh, size: 20),
+                          tooltip: 'Recalcular frete',
+                          onPressed: () => _handleCalculateDelivery(address),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
               if (checkoutState.deliveryFee > 0)
                 Padding(

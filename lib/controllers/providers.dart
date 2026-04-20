@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
@@ -39,6 +40,9 @@ final merchandisingServiceProvider = Provider<MerchandisingService>((ref) {
 final appInfoProvider = FutureProvider<AppInfo>((ref) async {
   return ref.read(settingsServiceProvider).getAppInfo();
 });
+
+// UI Keys
+final cartIconKeyProvider = Provider((ref) => GlobalKey());
 
 final homeDataProvider = FutureProvider((ref) async {
   return ref.read(merchandisingServiceProvider).getHomeData();

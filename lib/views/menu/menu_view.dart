@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/menu_controller.dart' as mc;
+import '../../controllers/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/utils/cart_animation_helper.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../widgets/app_button.dart';
 import '../widgets/product_card.dart';
@@ -26,7 +28,11 @@ class MenuView extends ConsumerWidget {
         actions: [
           Stack(
             children: [
-              IconButton(icon: const Icon(Icons.shopping_cart_outlined), onPressed: () => context.go('/cart')),
+              IconButton(
+                key: ref.watch(cartIconKeyProvider),
+                icon: const Icon(Icons.shopping_cart_outlined),
+                onPressed: () => context.go('/cart'),
+              ),
               if (cartNotifier.itemCount > 0)
                 Positioned(
                   right: 4,
@@ -90,18 +96,14 @@ class MenuView extends ConsumerWidget {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => ProductCard(
                       product: filtered[index],
-                      onAddTap: () {
+                      onAddTap: (key) {
                         cartNotifier.addProduct(filtered[index]);
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${filtered[index].name} adicionado ao carrinho!'),
-                            duration: const Duration(seconds: 2),
-                            action: SnackBarAction(
-                              label: 'VER CARRINHO',
-                              onPressed: () => context.go('/cart'),
-                            ),
-                          ),
+                        final cartKey = ref.read(cartIconKeyProvider);
+                        CartAnimationHelper.runFlyToCartAnimation(
+                          context: context,
+                          sourceKey: key,
+                          destKey: cartKey,
+                          imageUrl: filtered[index].imageUrl,
                         );
                       },
                       onTap: () => context.go('/product/${filtered[index].id}'),

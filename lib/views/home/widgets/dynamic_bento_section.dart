@@ -10,7 +10,7 @@ import '../../widgets/section_header.dart';
 
 class DynamicBentoSection extends StatelessWidget {
   final MerchandisingSection section;
-  final Function(Product) onAddTap;
+  final Function(Product, GlobalKey) onAddTap;
 
   const DynamicBentoSection({
     super.key,
@@ -43,7 +43,7 @@ class DynamicBentoSection extends StatelessWidget {
                 : CurrencyFormatter.format(item1.price),
             imageUrl: ApiConstants.getImageUrl(item1.imageUrl) ?? '',
             color: AppColors.surfaceContainerLow,
-            onAddTap: () => onAddTap(item1),
+            onAddTap: (key) => onAddTap(item1, key),
           ),
         if (item2 != null) ...[
           const SizedBox(height: 16),
@@ -57,7 +57,7 @@ class DynamicBentoSection extends StatelessWidget {
             imageUrl: ApiConstants.getImageUrl(item2.imageUrl) ?? '',
             color: AppColors.primary,
             onPrimary: true,
-            onAddTap: () => onAddTap(item2),
+            onAddTap: (key) => onAddTap(item2, key),
           ),
         ],
         const SizedBox(height: 12),
@@ -74,9 +74,10 @@ class _BentoCard extends StatelessWidget {
   final String imageUrl;
   final Color color;
   final bool onPrimary;
-  final VoidCallback onAddTap;
+  final Function(GlobalKey) onAddTap;
+  final GlobalKey addButtonKey = GlobalKey();
 
-  const _BentoCard({
+  _BentoCard({
     required this.title,
     required this.subtitle,
     required this.description,
@@ -154,7 +155,8 @@ class _BentoCard extends StatelessWidget {
                     Text(price, style: AppTypography.titleLarge.copyWith(color: textColor)),
                     const SizedBox(width: 8),
                     GestureDetector(
-                      onTap: onAddTap,
+                      key: addButtonKey,
+                      onTap: () => onAddTap(addButtonKey),
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(color: textColor, shape: BoxShape.circle),

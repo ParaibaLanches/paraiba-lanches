@@ -118,40 +118,6 @@ class CartView extends ConsumerWidget {
                   child: SafeArea(
                     child: Column(
                       children: [
-                        // Coupon Input Field
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'Cupom de Desconto',
-                                  hintStyle: AppTypography.labelLarge.copyWith(color: AppColors.outline),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                  filled: true,
-                                  fillColor: AppColors.surfaceContainerHigh,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.secondary,
-                                foregroundColor: AppColors.onSecondary,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                              ),
-                              child: const Text('Aplicar'),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        const Divider(color: AppColors.outlineVariant),
-                        const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
