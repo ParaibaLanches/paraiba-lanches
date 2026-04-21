@@ -28,6 +28,13 @@ class AuthService {
     String? phone,
     String? document,
     String? address,
+    String? cep,
+    String? street,
+    String? number,
+    String? neighborhood,
+    String? city,
+    String? state,
+    String? complement,
   }) async {
     final res = await _api.post(ApiConstants.register, data: {
       'name': name,
@@ -36,6 +43,13 @@ class AuthService {
       'phone': phone,
       'document': document,
       'address': address,
+      'cep': cep,
+      'street': street,
+      'number': number,
+      'neighborhood': neighborhood,
+      'city': city,
+      'state': state,
+      'complement': complement,
     });
     if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao cadastrar');
   }
@@ -46,12 +60,31 @@ class AuthService {
     return CustomerProfile.fromJson(res['data']);
   }
 
-  Future<void> updateProfile({String? name, String? phone, String? document, String? address}) async {
+  Future<void> updateProfile({
+    String? name,
+    String? phone,
+    String? document,
+    String? address,
+    String? cep,
+    String? street,
+    String? number,
+    String? neighborhood,
+    String? city,
+    String? state,
+    String? complement,
+  }) async {
     final res = await _api.put(ApiConstants.profile, data: {
       'name': name,
       'phone': phone,
       'document': document,
       'address': address,
+      'cep': cep,
+      'street': street,
+      'number': number,
+      'neighborhood': neighborhood,
+      'city': city,
+      'state': state,
+      'complement': complement,
     });
     if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao atualizar');
   }

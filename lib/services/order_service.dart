@@ -49,7 +49,14 @@ class OrderService {
     final res = await _api.get(ApiConstants.calculateDelivery, params: {
       'destination': destination,
     });
+    
     if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao calcular frete');
-    return (res['data'] as num).toDouble();
+    
+    final data = res['data'];
+    if (data is Map) {
+      return (data['fee'] as num).toDouble();
+    }
+    
+    return (data as num).toDouble();
   }
 }

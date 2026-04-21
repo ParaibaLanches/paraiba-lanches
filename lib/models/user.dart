@@ -5,6 +5,13 @@ class CustomerProfile {
   final String phone;
   final String document;
   final String address;
+  final String cep;
+  final String street;
+  final String number;
+  final String neighborhood;
+  final String city;
+  final String state;
+  final String complement;
   final String avatarUrl;
 
   CustomerProfile({
@@ -14,6 +21,13 @@ class CustomerProfile {
     this.phone = '',
     this.document = '',
     this.address = '',
+    this.cep = '',
+    this.street = '',
+    this.number = '',
+    this.neighborhood = '',
+    this.city = '',
+    this.state = '',
+    this.complement = '',
     this.avatarUrl = '',
   });
 
@@ -24,6 +38,13 @@ class CustomerProfile {
         phone: json['phone'] as String? ?? '',
         document: json['document'] as String? ?? '',
         address: json['address'] as String? ?? '',
+        cep: json['cep'] as String? ?? '',
+        street: json['street'] as String? ?? '',
+        number: json['number'] as String? ?? '',
+        neighborhood: json['neighborhood'] as String? ?? '',
+        city: json['city'] as String? ?? '',
+        state: json['state'] as String? ?? '',
+        complement: json['complement'] as String? ?? '',
         avatarUrl: json['avatar_url'] as String? ?? '',
       );
 }

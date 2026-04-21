@@ -43,10 +43,33 @@ class AuthController extends Notifier<AuthState> {
     required String email,
     required String password,
     String? phone,
+    String? document,
+    String? address,
+    String? cep,
+    String? street,
+    String? number,
+    String? neighborhood,
+    String? city,
+    String? stateAbbreviation,
+    String? complement,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await ref.read(authServiceProvider).register(name: name, email: email, password: password, phone: phone);
+      await ref.read(authServiceProvider).register(
+        name: name,
+        email: email,
+        password: password,
+        phone: phone,
+        document: document,
+        address: address,
+        cep: cep,
+        street: street,
+        number: number,
+        neighborhood: neighborhood,
+        city: city,
+        state: stateAbbreviation,
+        complement: complement,
+      );
       await login(email, password);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString().replaceAll('Exception: ', ''));
@@ -74,7 +97,19 @@ class AuthController extends Notifier<AuthState> {
     state = const AuthState(isInitialized: true);
   }
 
-  Future<void> updateProfile({String? name, String? phone, String? document, String? address}) async {
+  Future<void> updateProfile({
+    String? name,
+    String? phone,
+    String? document,
+    String? address,
+    String? cep,
+    String? street,
+    String? number,
+    String? neighborhood,
+    String? city,
+    String? stateAbbreviation,
+    String? complement,
+  }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await ref.read(authServiceProvider).updateProfile(
@@ -82,6 +117,13 @@ class AuthController extends Notifier<AuthState> {
         phone: phone,
         document: document,
         address: address,
+        cep: cep,
+        street: street,
+        number: number,
+        neighborhood: neighborhood,
+        city: city,
+        state: stateAbbreviation,
+        complement: complement,
       );
       final profile = await ref.read(authServiceProvider).getProfile();
       state = state.copyWith(user: profile, isLoading: false);
