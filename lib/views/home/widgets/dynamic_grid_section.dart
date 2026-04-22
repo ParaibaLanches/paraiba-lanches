@@ -1,0 +1,53 @@
+import 'package:flutter/material.dart';
+import '../../../models/product.dart';
+import '../../../models/merchandising_section.dart';
+import '../../widgets/product_card.dart';
+import '../../widgets/section_header.dart';
+
+class DynamicGridSection extends StatelessWidget {
+  final MerchandisingSection section;
+  final Function(Product, GlobalKey) onAddTap;
+
+  const DynamicGridSection({
+    super.key,
+    required this.section,
+    required this.onAddTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (section.products.isEmpty) return const SizedBox();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader(
+          title: section.title,
+          subtitle: section.subtitle.isNotEmpty ? section.subtitle : null,
+        ),
+        const SizedBox(height: 8),
+        GridView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            mainAxisExtent: 240, // Altura fixa para os cards verticais
+          ),
+          itemCount: section.products.length,
+          itemBuilder: (context, index) {
+            final product = section.products[index];
+            return ProductCard(
+              product: product,
+              layoutType: MerchandisingLayoutType.grid,
+              onAddTap: (key) => onAddTap(product, key),
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+}

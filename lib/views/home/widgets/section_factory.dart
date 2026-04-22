@@ -4,6 +4,7 @@ import '../../../models/merchandising_section.dart';
 import 'dynamic_bento_section.dart';
 import 'dynamic_carousel_section.dart';
 import 'dynamic_hero_section.dart';
+import 'dynamic_grid_section.dart';
 
 class SectionFactory extends StatelessWidget {
   final MerchandisingSection section;
@@ -27,6 +28,7 @@ class SectionFactory extends StatelessWidget {
       case MerchandisingLayoutType.bento:
         return DynamicBentoSection(section: section, onAddTap: onAddTap);
       case MerchandisingLayoutType.grid:
+        return DynamicGridSection(section: section, onAddTap: onAddTap);
       case MerchandisingLayoutType.horizontalList:
         return DynamicCarouselSection(section: section, onAddTap: onAddTap);
       default:
