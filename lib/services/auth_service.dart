@@ -13,8 +13,9 @@ class AuthService {
       ApiConstants.login,
       data: {'email': email, 'password': password},
     );
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao fazer login');
+    }
 
     final tokens = AuthTokens.fromJson(res['data']);
     await TokenStorage.saveTokens(tokens.accessToken, tokens.refreshToken);
@@ -54,14 +55,16 @@ class AuthService {
         'complement': complement,
       },
     );
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao cadastrar');
+    }
   }
 
   Future<CustomerProfile> getProfile() async {
     final res = await _api.get(ApiConstants.profile);
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao buscar perfil');
+    }
     return CustomerProfile.fromJson(res['data']);
   }
 
@@ -94,8 +97,9 @@ class AuthService {
         'complement': complement,
       },
     );
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao atualizar');
+    }
   }
 
   Future<String> updateAvatar(String filePath) async {
@@ -104,8 +108,9 @@ class AuthService {
       filePath,
       fileKey: 'image',
     );
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao enviar imagem');
+    }
     return res['data']['avatar_url'] as String;
   }
 

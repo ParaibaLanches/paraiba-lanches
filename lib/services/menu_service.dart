@@ -9,15 +9,17 @@ class MenuService {
 
   Future<List<Product>> getMenu() async {
     final res = await _api.get(ApiConstants.menu);
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao buscar cardapio');
+    }
     return (res['data'] as List).map((e) => Product.fromJson(e)).toList();
   }
 
   Future<List<Category>> getCategories() async {
     final res = await _api.get(ApiConstants.categories);
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao buscar categorias');
+    }
     return (res['data'] as List).map((e) => Category.fromJson(e)).toList();
   }
 }

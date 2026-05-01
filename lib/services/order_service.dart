@@ -34,22 +34,25 @@ class OrderService {
         ],
       },
     );
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao criar pedido');
+    }
     return Order.fromJson(res['data']);
   }
 
   Future<List<Order>> getMyOrders() async {
     final res = await _api.get(ApiConstants.orders);
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao buscar pedidos');
+    }
     return (res['data'] as List).map((e) => Order.fromJson(e)).toList();
   }
 
   Future<Order> getOrderById(int id) async {
     final res = await _api.get('${ApiConstants.orders}/$id');
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao buscar pedido');
+    }
     return Order.fromJson(res['data']);
   }
 
@@ -59,8 +62,9 @@ class OrderService {
       params: {'destination': destination},
     );
 
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao calcular frete');
+    }
 
     final data = res['data'];
     if (data is Map) {

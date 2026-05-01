@@ -10,8 +10,9 @@ class CouponService {
   /// Fetches the list of active coupons assigned to the current customer.
   Future<List<Coupon>> getMyCoupons() async {
     final res = await _api.get(ApiConstants.coupons);
-    if (res['success'] != true)
+    if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Erro ao buscar cupons');
+    }
 
     return (res['data'] as List)
         .map((e) => Coupon.fromJson(e as Map<String, dynamic>))
