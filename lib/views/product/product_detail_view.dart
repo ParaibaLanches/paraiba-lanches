@@ -12,8 +12,9 @@ import '../../models/product.dart';
 
 class ProductDetailView extends ConsumerStatefulWidget {
   final Product product;
+  final String? heroTag;
 
-  const ProductDetailView({super.key, required this.product});
+  const ProductDetailView({super.key, required this.product, this.heroTag});
 
   @override
   ConsumerState<ProductDetailView> createState() => _ProductDetailViewState();
@@ -86,7 +87,7 @@ class _ProductDetailViewState extends ConsumerState<ProductDetailView> {
       ),
       flexibleSpace: FlexibleSpaceBar(
         background: Hero(
-          tag: 'product_image_${widget.product.id}',
+          tag: widget.heroTag ?? 'product_image_${widget.product.id}',
           child: widget.product.imageUrl.isNotEmpty
               ? CachedNetworkImage(
                   imageUrl: ApiConstants.getImageUrl(widget.product.imageUrl)!,

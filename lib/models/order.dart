@@ -19,6 +19,8 @@ class OrderItem {
     this.notes = '',
   });
 
+  double get subtotal => quantity * unitPrice;
+
   factory OrderItem.fromJson(Map<String, dynamic> json) => OrderItem(
     id: json['id'] as int,
     orderId: json['order_id'] as int,
@@ -50,6 +52,9 @@ class Order {
   final String orderType;
   final String status;
   final double total;
+  final double subtotal;
+  final double deliveryFee;
+  final double discount;
   final String notes;
   final List<OrderItem> items;
   final List<Payment> payments;
@@ -62,6 +67,9 @@ class Order {
     required this.orderType,
     required this.status,
     required this.total,
+    this.subtotal = 0,
+    this.deliveryFee = 0,
+    this.discount = 0,
     this.notes = '',
     this.items = const [],
     this.payments = const [],
@@ -75,6 +83,9 @@ class Order {
     orderType: json['order_type'] as String,
     status: json['status'] as String,
     total: (json['total'] as num).toDouble(),
+    subtotal: (json['subtotal'] as num?)?.toDouble() ?? 0,
+    deliveryFee: (json['delivery_fee'] as num?)?.toDouble() ?? 0,
+    discount: (json['discount'] as num?)?.toDouble() ?? 0,
     notes: json['notes'] as String? ?? '',
     items:
         (json['items'] as List<dynamic>?)

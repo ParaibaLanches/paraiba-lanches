@@ -14,6 +14,7 @@ class ProductCard extends StatelessWidget {
   final Function(GlobalKey)? onAddTap;
   final VoidCallback? onTap;
   final Color? textColor;
+  final String? heroTag;
   final GlobalKey addButtonKey = GlobalKey();
 
   ProductCard({
@@ -23,6 +24,7 @@ class ProductCard extends StatelessWidget {
     this.onAddTap,
     this.onTap,
     this.textColor,
+    this.heroTag,
   });
 
   @override
@@ -30,7 +32,10 @@ class ProductCard extends StatelessWidget {
     final isGrid = layoutType == MerchandisingLayoutType.grid;
 
     return GestureDetector(
-      onTap: () => context.push('/product', extra: product),
+      onTap: () => context.push('/product', extra: {
+        'product': product,
+        'heroTag': heroTag ?? 'product_image_${product.id}',
+      }),
       child: Container(
         margin: EdgeInsets.only(bottom: isGrid ? 0 : 16),
         padding: const EdgeInsets.all(12),
@@ -98,7 +103,7 @@ class ProductCard extends StatelessWidget {
         width: width,
         height: height,
         child: Hero(
-          tag: 'product_image_${product.id}',
+          tag: heroTag ?? 'product_image_${product.id}',
           child: product.imageUrl.isNotEmpty
               ? CachedNetworkImage(
                   imageUrl: ApiConstants.getImageUrl(product.imageUrl)!,

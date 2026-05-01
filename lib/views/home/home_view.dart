@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../../controllers/cart_controller.dart';
+import '../../controllers/orders_controller.dart';
 import '../../controllers/menu_controller.dart' as mc;
 import '../../controllers/providers.dart';
 import '../../core/constants/api_constants.dart';
@@ -11,6 +12,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/utils/cart_animation_helper.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../models/product.dart';
+import '../../models/order.dart';
 import '../widgets/app_button.dart';
 import '../widgets/product_card.dart';
 import '../widgets/section_header.dart';
@@ -27,6 +29,7 @@ class HomeView extends ConsumerWidget {
     final appInfoAsync = ref.watch(appInfoProvider);
     final cart = ref.watch(cartProvider);
     final cartNotifier = ref.read(cartProvider.notifier);
+    final ordersAsync = ref.watch(myOrdersProvider);
 
     void addToCart(Product product, GlobalKey sourceKey) {
       cartNotifier.addProduct(product);
@@ -329,9 +332,101 @@ class HomeView extends ConsumerWidget {
                 ),
               ),
             ),
+          ordersAsync.when(
+            data: (orders) => _buildActiveOrderBar(context, ref, orders),
+            loading: () => const SizedBox.shrink(),
+            error: (err, _) => const SizedBox.shrink(),
+          ),
         ],
       ),
     );
+  }
+
+  Widget _buildActiveOrderBar(
+    BuildContext context,
+    WidgetRef ref,
+    List<Order> orders,
+  ) {
+    final activeOrders = orders
+        .where(
+          (o) =>
+              o.status == 'pending' ||
+              o.status == 'preparing' ||
+              o.status == 'ready',
+        )
+        .toList();
+
+    if (activeOrders.isEmpty) return const SizedBox.shrink();
+
+    final latest = activeOrders.last;
+
+    return Positioned(
+      left: 20,
+      right: 20,
+      top: 100, // Below App Bar
+      child: GestureDetector(
+        onTap: () => context.push('/order-detail', extra: latest),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.timer_outlined, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Pedido ${latest.code} em andamento',
+                      style: AppTypography.labelLarge.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      _getStatusLabel(latest.status),
+                      style: AppTypography.bodySmall.copyWith(
+                        color: Colors.white.withValues(alpha: 0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white,
+                size: 14,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getStatusLabel(String status) {
+    switch (status) {
+      case 'pending':
+        return 'Aguardando confirmação';
+      case 'preparing':
+        return 'Sendo preparado na cozinha';
+      case 'ready':
+        return 'Pronto para entrega/retirada';
+      default:
+        return 'Acompanhe seu pedido';
+    }
   }
 }
 

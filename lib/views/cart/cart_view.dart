@@ -39,7 +39,7 @@ class CartView extends ConsumerWidget {
               description:
                   'Adicione itens deliciosos do nosso cardápio para continuar.',
               buttonLabel: 'Ir para o cardápio',
-              onButtonPressed: () => context.go('/menu'),
+              onButtonPressed: () => context.go('/home'),
             )
           : Column(
               children: [

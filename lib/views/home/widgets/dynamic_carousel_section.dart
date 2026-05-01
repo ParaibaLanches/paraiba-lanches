@@ -40,6 +40,7 @@ class DynamicCarouselSection extends StatelessWidget {
                 margin: const EdgeInsets.only(right: 16),
                 child: ProductCard(
                   product: product,
+                  heroTag: 'section_${section.id}_carousel_product_${product.id}',
                   textColor: section.titleColor == 'white'
                       ? Colors.white
                       : (section.titleColor == 'primary'

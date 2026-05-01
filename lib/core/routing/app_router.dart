@@ -5,13 +5,14 @@ import '../../controllers/auth_controller.dart';
 import '../../views/auth/login_view.dart';
 import '../../views/auth/register_view.dart';
 import '../../views/home/home_view.dart';
-import '../../views/menu/menu_view.dart';
 import '../../views/cart/cart_view.dart';
 import '../../views/checkout/checkout_view.dart';
 import '../../views/orders/orders_view.dart';
+import '../../views/orders/order_detail_view.dart';
 import '../../views/profile/profile_view.dart';
 import '../../views/product/product_detail_view.dart';
 import '../../models/product.dart';
+import '../../models/order.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final notifier = RouterNotifier(ref);
@@ -46,13 +47,26 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/orders', builder: (_, _) => const OrdersView()),
           GoRoute(path: '/cart', builder: (_, _) => const CartView()),
           GoRoute(path: '/profile', builder: (_, _) => const ProfileView()),
-          GoRoute(path: '/menu', builder: (_, _) => const MenuView()),
           GoRoute(path: '/checkout', builder: (_, _) => const CheckoutView()),
           GoRoute(
             path: '/product',
             builder: (context, state) {
+              if (state.extra is Map<String, dynamic>) {
+                final map = state.extra as Map<String, dynamic>;
+                return ProductDetailView(
+                  product: map['product'] as Product,
+                  heroTag: map['heroTag'] as String?,
+                );
+              }
               final product = state.extra as Product;
               return ProductDetailView(product: product);
+            },
+          ),
+          GoRoute(
+            path: '/order-detail',
+            builder: (context, state) {
+              final order = state.extra as Order;
+              return OrderDetailView(order: order);
             },
           ),
         ],

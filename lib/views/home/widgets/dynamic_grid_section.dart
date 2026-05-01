@@ -42,6 +42,7 @@ class DynamicGridSection extends StatelessWidget {
             final product = section.products[index];
             return ProductCard(
               product: product,
+              heroTag: 'section_${section.id}_grid_product_${product.id}',
               layoutType: MerchandisingLayoutType.grid,
               textColor: section.titleColor == 'white'
                   ? Colors.white

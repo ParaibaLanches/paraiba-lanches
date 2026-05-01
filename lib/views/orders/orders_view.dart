@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../controllers/orders_controller.dart';
 import '../../core/theme/app_colors.dart';
@@ -13,60 +14,117 @@ class OrdersView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Ensure the WebSocket events stream is active while this view is alive
     ref.watch(orderEventsProvider);
 
     final ordersAsync = ref.watch(myOrdersProvider);
     final connStatus = ref.watch(wsConnectionStatusProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Meus Pedidos', style: AppTypography.headlineMedium),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: _LiveBadge(status: connStatus),
-          ),
-        ],
-      ),
-      body: ordersAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
-        ),
-        error: (err, _) => Center(child: Text('Erro: $err')),
-        data: (orders) {
-          if (orders.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.receipt_long_outlined,
-                    size: 64,
-                    color: AppColors.onSurfaceVariant,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Nenhum pedido ainda',
-                    style: AppTypography.headlineMedium.copyWith(
-                      color: AppColors.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-          return RefreshIndicator(
-            color: AppColors.primary,
-            onRefresh: () => ref.read(myOrdersProvider.notifier).refresh(),
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: orders.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder: (context, index) => _OrderCard(order: orders[index]),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Meus Pedidos', style: AppTypography.headlineMedium),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: _LiveBadge(status: connStatus),
             ),
-          );
-        },
+          ],
+          bottom: TabBar(
+            indicatorColor: AppColors.primary,
+            labelColor: AppColors.primary,
+            unselectedLabelColor: AppColors.outline,
+            tabs: const [
+              Tab(text: 'Em andamento'),
+              Tab(text: 'Histórico'),
+            ],
+          ),
+        ),
+        body: ordersAsync.when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          ),
+          error: (err, _) => Center(child: Text('Erro: $err')),
+          data: (orders) {
+            final activeOrders = orders
+                .where(
+                  (o) =>
+                      o.status == 'pending' ||
+                      o.status == 'preparing' ||
+                      o.status == 'ready',
+                )
+                .toList();
+
+            final historicalOrders = orders
+                .where(
+                  (o) => o.status == 'delivered' || o.status == 'cancelled',
+                )
+                .toList();
+
+            return TabBarView(
+              children: [
+                _OrderList(
+                  orders: activeOrders,
+                  emptyLabel: 'Nenhum pedido em andamento',
+                  ref: ref,
+                ),
+                _OrderList(
+                  orders: historicalOrders,
+                  emptyLabel: 'Seu histórico está vazio',
+                  ref: ref,
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _OrderList extends StatelessWidget {
+  final List<Order> orders;
+  final String emptyLabel;
+  final WidgetRef ref;
+
+  const _OrderList({
+    required this.orders,
+    required this.emptyLabel,
+    required this.ref,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (orders.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.receipt_long_outlined,
+              size: 64,
+              color: AppColors.onSurfaceVariant,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              emptyLabel,
+              style: AppTypography.titleMedium.copyWith(
+                color: AppColors.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () => ref.read(myOrdersProvider.notifier).refresh(),
+      child: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: orders.length,
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
+        itemBuilder: (context, index) => _OrderCard(order: orders[index]),
       ),
     );
   }
@@ -212,66 +270,77 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(order.code, style: AppTypography.headlineMedium),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: _statusColor(),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  _statusLabel(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
+    return InkWell(
+      onTap: () => context.push('/order-detail', extra: order),
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.outlineVariant.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  order.code,
+                  style: AppTypography.headlineMedium.copyWith(
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ...order.items.map(
-            (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: Text(
-                '${item.quantity}x ${item.product?.name ?? "Produto"}',
-                style: AppTypography.bodySmall,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Total do Pedido', style: AppTypography.bodySmall),
-              Text(
-                CurrencyFormatter.format(order.total),
-                style: AppTypography.titleMedium.copyWith(
-                  color: AppColors.primary,
+                Text(
+                  CurrencyFormatter.format(order.total),
+                  style: AppTypography.titleLarge.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _statusColor().withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: _statusColor().withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Text(
+                    _statusLabel().toUpperCase(),
+                    style: TextStyle(
+                      color: _statusColor(),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
+                  color: AppColors.outlineVariant,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
