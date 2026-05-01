@@ -40,9 +40,15 @@ class SectionHeader extends StatelessWidget {
                   children: [
                     Text(
                       actionLabel!.toUpperCase(),
-                      style: AppTypography.labelLarge.copyWith(color: AppColors.primary),
+                      style: AppTypography.labelLarge.copyWith(
+                        color: AppColors.primary,
+                      ),
                     ),
-                    const Icon(Icons.arrow_forward_ios, size: 12, color: AppColors.primary),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12,
+                      color: AppColors.primary,
+                    ),
                   ],
                 ),
               ),
@@ -52,7 +58,9 @@ class SectionHeader extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             subtitle!,
-            style: AppTypography.bodySmall.copyWith(color: AppColors.onSurfaceVariant),
+            style: AppTypography.bodySmall.copyWith(
+              color: AppColors.onSurfaceVariant,
+            ),
           ),
         ],
       ],

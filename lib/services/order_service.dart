@@ -15,48 +15,58 @@ class OrderService {
     String orderType = 'local',
     String notes = '',
   }) async {
-    final res = await _api.post(ApiConstants.orders, data: {
-      'order_type': orderType,
-      'notes': notes,
-      'items': items
-          .map((i) => {
+    final res = await _api.post(
+      ApiConstants.orders,
+      data: {
+        'order_type': orderType,
+        'notes': notes,
+        'items': items
+            .map(
+              (i) => {
                 'product_id': i.product.id,
                 'quantity': i.quantity,
                 'notes': i.notes,
-              })
-          .toList(),
-      'payments': [
-        {'method': paymentMethod, 'amount': paymentAmount}
-      ],
-    });
-    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao criar pedido');
+              },
+            )
+            .toList(),
+        'payments': [
+          {'method': paymentMethod, 'amount': paymentAmount},
+        ],
+      },
+    );
+    if (res['success'] != true)
+      throw Exception(res['error'] ?? 'Erro ao criar pedido');
     return Order.fromJson(res['data']);
   }
 
   Future<List<Order>> getMyOrders() async {
     final res = await _api.get(ApiConstants.orders);
-    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao buscar pedidos');
+    if (res['success'] != true)
+      throw Exception(res['error'] ?? 'Erro ao buscar pedidos');
     return (res['data'] as List).map((e) => Order.fromJson(e)).toList();
   }
 
   Future<Order> getOrderById(int id) async {
     final res = await _api.get('${ApiConstants.orders}/$id');
-    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao buscar pedido');
+    if (res['success'] != true)
+      throw Exception(res['error'] ?? 'Erro ao buscar pedido');
     return Order.fromJson(res['data']);
   }
 
   Future<double> calculateDeliveryFee(String destination) async {
-    final res = await _api.get(ApiConstants.calculateDelivery, params: {
-      'destination': destination,
-    });
-    
-    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao calcular frete');
-    
+    final res = await _api.get(
+      ApiConstants.calculateDelivery,
+      params: {'destination': destination},
+    );
+
+    if (res['success'] != true)
+      throw Exception(res['error'] ?? 'Erro ao calcular frete');
+
     final data = res['data'];
     if (data is Map) {
       return (data['fee'] as num).toDouble();
     }
-    
+
     return (data as num).toDouble();
   }
 }

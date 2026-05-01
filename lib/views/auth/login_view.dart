@@ -31,7 +31,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
   void _handleLogin() {
     if (!_formKey.currentState!.validate()) return;
-    
+
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     ref.read(authControllerProvider.notifier).login(email, password);
@@ -53,12 +53,28 @@ class _LoginViewState extends ConsumerState<LoginView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 40),
-              Text('PARAIBA', style: AppTypography.displayLarge.copyWith(color: AppColors.primary, height: 1)),
-              Text('LANCHES', style: AppTypography.headlineLarge.copyWith(color: AppColors.onSurfaceVariant)),
+              Text(
+                'PARAIBA',
+                style: AppTypography.displayLarge.copyWith(
+                  color: AppColors.primary,
+                  height: 1,
+                ),
+              ),
+              Text(
+                'LANCHES',
+                style: AppTypography.headlineLarge.copyWith(
+                  color: AppColors.onSurfaceVariant,
+                ),
+              ),
               const SizedBox(height: 8),
               Text('FACA SEU LOGIN', style: AppTypography.displayMedium),
               const SizedBox(height: 4),
-              Text('Onde o sabor tem peso pesado', style: AppTypography.bodyMedium.copyWith(color: AppColors.onSurfaceVariant)),
+              Text(
+                'Onde o sabor tem peso pesado',
+                style: AppTypography.bodyMedium.copyWith(
+                  color: AppColors.onSurfaceVariant,
+                ),
+              ),
               const SizedBox(height: 40),
               // Hero image placeholder
               Container(
@@ -68,7 +84,11 @@ class _LoginViewState extends ConsumerState<LoginView> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const Center(
-                  child: Icon(Icons.lunch_dining, size: 80, color: AppColors.onPrimary),
+                  child: Icon(
+                    Icons.lunch_dining,
+                    size: 80,
+                    color: AppColors.onPrimary,
+                  ),
                 ),
               ),
               const SizedBox(height: 32),
@@ -90,18 +110,31 @@ class _LoginViewState extends ConsumerState<LoginView> {
                       controller: _passwordController,
                       isPassword: _obscurePassword,
                       hint: '********',
-                      validator: (value) => AppValidators.required(value, 'Senha'),
+                      validator: (value) =>
+                          AppValidators.required(value, 'Senha'),
                       onSubmitted: (_) => _handleLogin(),
                       suffixIcon: IconButton(
-                        icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, size: 20),
-                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          size: 20,
+                        ),
+                        onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
                       ),
                     ),
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () {},
-                        child: Text('ESQUECI MINHA SENHA', style: AppTypography.labelSmall.copyWith(color: AppColors.primary)),
+                        child: Text(
+                          'ESQUECI MINHA SENHA',
+                          style: AppTypography.labelSmall.copyWith(
+                            color: AppColors.primary,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -115,7 +148,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
                     color: AppColors.errorContainer.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(authState.error!, style: AppTypography.bodySmall.copyWith(color: AppColors.error)),
+                  child: Text(
+                    authState.error!,
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.error,
+                    ),
+                  ),
                 ),
               ],
               const SizedBox(height: 24),
@@ -128,13 +166,21 @@ class _LoginViewState extends ConsumerState<LoginView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Ainda nao tem conta? ', style: AppTypography.bodyMedium),
+                  Text(
+                    'Ainda nao tem conta? ',
+                    style: AppTypography.bodyMedium,
+                  ),
                   GestureDetector(
                     onTap: () {
                       ref.read(authControllerProvider.notifier).clearError();
                       context.go('/register');
                     },
-                    child: Text('CADASTRE-SE', style: AppTypography.labelLarge.copyWith(color: AppColors.primary)),
+                    child: Text(
+                      'CADASTRE-SE',
+                      style: AppTypography.labelLarge.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
                   ),
                 ],
               ),

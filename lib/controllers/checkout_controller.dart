@@ -22,7 +22,9 @@ class CheckoutState {
     String? Function()? error,
   }) {
     return CheckoutState(
-      appliedCoupon: appliedCoupon != null ? appliedCoupon() : this.appliedCoupon,
+      appliedCoupon: appliedCoupon != null
+          ? appliedCoupon()
+          : this.appliedCoupon,
       deliveryFee: deliveryFee ?? this.deliveryFee,
       isLoading: isLoading ?? this.isLoading,
       error: error != null ? error() : this.error,
@@ -64,4 +66,6 @@ class CheckoutController extends Notifier<CheckoutState> {
   }
 }
 
-final checkoutProvider = NotifierProvider<CheckoutController, CheckoutState>(CheckoutController.new);
+final checkoutProvider = NotifierProvider<CheckoutController, CheckoutState>(
+  CheckoutController.new,
+);

@@ -25,7 +25,10 @@ class CartView extends ConsumerWidget {
           if (cart.isNotEmpty)
             TextButton(
               onPressed: () => cartNotifier.clear(),
-              child: Text('Limpar', style: AppTypography.bodySmall.copyWith(color: AppColors.error)),
+              child: Text(
+                'Limpar',
+                style: AppTypography.bodySmall.copyWith(color: AppColors.error),
+              ),
             ),
         ],
       ),
@@ -33,7 +36,8 @@ class CartView extends ConsumerWidget {
           ? EmptyState(
               icon: Icons.shopping_cart_outlined,
               title: 'Carrinho vazio',
-              description: 'Adicione itens deliciosos do nosso cardápio para continuar.',
+              description:
+                  'Adicione itens deliciosos do nosso cardápio para continuar.',
               buttonLabel: 'Ir para o cardápio',
               onButtonPressed: () => context.go('/menu'),
             )
@@ -63,19 +67,36 @@ class CartView extends ConsumerWidget {
                                     ? CachedNetworkImage(
                                         imageUrl: item.product.imageUrl,
                                         fit: BoxFit.cover,
-                                        placeholder: (context, url) => Shimmer.fromColors(
-                                          baseColor: AppColors.surfaceContainerLow,
-                                          highlightColor: AppColors.surfaceContainerLowest,
-                                          child: Container(color: AppColors.surfaceContainerLow),
-                                        ),
-                                        errorWidget: (context, url, error) => Container(
-                                          color: AppColors.surfaceContainerLow,
-                                          child: const Icon(Icons.lunch_dining, color: AppColors.onSurfaceVariant, size: 28),
-                                        ),
+                                        placeholder: (context, url) =>
+                                            Shimmer.fromColors(
+                                              baseColor:
+                                                  AppColors.surfaceContainerLow,
+                                              highlightColor: AppColors
+                                                  .surfaceContainerLowest,
+                                              child: Container(
+                                                color: AppColors
+                                                    .surfaceContainerLow,
+                                              ),
+                                            ),
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                              color:
+                                                  AppColors.surfaceContainerLow,
+                                              child: const Icon(
+                                                Icons.lunch_dining,
+                                                color:
+                                                    AppColors.onSurfaceVariant,
+                                                size: 28,
+                                              ),
+                                            ),
                                       )
                                     : Container(
                                         color: AppColors.surfaceContainerLow,
-                                        child: const Icon(Icons.lunch_dining, color: AppColors.onSurfaceVariant, size: 28),
+                                        child: const Icon(
+                                          Icons.lunch_dining,
+                                          color: AppColors.onSurfaceVariant,
+                                          size: 28,
+                                        ),
                                       ),
                               ),
                             ),
@@ -84,21 +105,44 @@ class CartView extends ConsumerWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(item.product.name, style: AppTypography.titleMedium),
-                                  Text(CurrencyFormatter.format(item.subtotal), style: AppTypography.bodySmall.copyWith(color: AppColors.primary)),
+                                  Text(
+                                    item.product.name,
+                                    style: AppTypography.titleMedium,
+                                  ),
+                                  Text(
+                                    CurrencyFormatter.format(item.subtotal),
+                                    style: AppTypography.bodySmall.copyWith(
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                             Row(
                               children: [
                                 IconButton(
-                                  onPressed: () => cartNotifier.updateQuantity(item.product.id, item.quantity - 1),
-                                  icon: const Icon(Icons.remove_circle_outline, size: 22),
+                                  onPressed: () => cartNotifier.updateQuantity(
+                                    item.product.id,
+                                    item.quantity - 1,
+                                  ),
+                                  icon: const Icon(
+                                    Icons.remove_circle_outline,
+                                    size: 22,
+                                  ),
                                 ),
-                                Text('${item.quantity}', style: AppTypography.titleMedium),
+                                Text(
+                                  '${item.quantity}',
+                                  style: AppTypography.titleMedium,
+                                ),
                                 IconButton(
-                                  onPressed: () => cartNotifier.updateQuantity(item.product.id, item.quantity + 1),
-                                  icon: const Icon(Icons.add_circle_outline, size: 22),
+                                  onPressed: () => cartNotifier.updateQuantity(
+                                    item.product.id,
+                                    item.quantity + 1,
+                                  ),
+                                  icon: const Icon(
+                                    Icons.add_circle_outline,
+                                    size: 22,
+                                  ),
                                 ),
                               ],
                             ),
@@ -113,7 +157,13 @@ class CartView extends ConsumerWidget {
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceContainerLowest,
-                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), offset: const Offset(0, -8), blurRadius: 24)],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        offset: const Offset(0, -8),
+                        blurRadius: 24,
+                      ),
+                    ],
                   ),
                   child: SafeArea(
                     child: Column(
@@ -122,7 +172,12 @@ class CartView extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Total', style: AppTypography.headlineMedium),
-                            Text(CurrencyFormatter.format(cartNotifier.total), style: AppTypography.headlineLarge.copyWith(color: AppColors.primary)),
+                            Text(
+                              CurrencyFormatter.format(cartNotifier.total),
+                              style: AppTypography.headlineLarge.copyWith(
+                                color: AppColors.primary,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),

@@ -31,7 +31,7 @@ class Coupon {
 
   double calculateDiscount(double subtotal) {
     if (subtotal < minPurchase) return 0;
-    
+
     if (type == 'percentage') {
       return subtotal * (value / 100);
     } else {

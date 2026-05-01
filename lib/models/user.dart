@@ -31,7 +31,8 @@ class CustomerProfile {
     this.avatarUrl = '',
   });
 
-  factory CustomerProfile.fromJson(Map<String, dynamic> json) => CustomerProfile(
+  factory CustomerProfile.fromJson(Map<String, dynamic> json) =>
+      CustomerProfile(
         id: json['id'] as int,
         name: json['name'] as String? ?? '',
         email: json['email'] as String,
@@ -56,7 +57,7 @@ class AuthTokens {
   AuthTokens({required this.accessToken, required this.refreshToken});
 
   factory AuthTokens.fromJson(Map<String, dynamic> json) => AuthTokens(
-        accessToken: json['access_token'] as String,
-        refreshToken: json['refresh_token'] as String,
-      );
+    accessToken: json['access_token'] as String,
+    refreshToken: json['refresh_token'] as String,
+  );
 }

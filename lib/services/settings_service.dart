@@ -9,7 +9,8 @@ class SettingsService {
 
   Future<AppInfo> getAppInfo() async {
     final res = await _api.get(ApiConstants.appInfo);
-    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao buscar informacoes do app');
+    if (res['success'] != true)
+      throw Exception(res['error'] ?? 'Erro ao buscar informacoes do app');
     return AppInfo.fromJson(res['data'] as Map<String, dynamic>);
   }
 }

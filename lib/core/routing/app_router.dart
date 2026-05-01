@@ -10,6 +10,8 @@ import '../../views/cart/cart_view.dart';
 import '../../views/checkout/checkout_view.dart';
 import '../../views/orders/orders_view.dart';
 import '../../views/profile/profile_view.dart';
+import '../../views/product/product_detail_view.dart';
+import '../../models/product.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final notifier = RouterNotifier(ref);
@@ -25,7 +27,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Do nothing if not initialized to avoid flickering or incorrect redirects
       if (!isInitialized) return null;
 
-      final isAuthRoute = state.uri.path == '/login' || state.uri.path == '/register';
+      final isAuthRoute =
+          state.uri.path == '/login' || state.uri.path == '/register';
 
       if (state.uri.path == '/') return '/home';
       if (!isAuth && !isAuthRoute) return '/login';
@@ -45,6 +48,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/profile', builder: (_, _) => const ProfileView()),
           GoRoute(path: '/menu', builder: (_, _) => const MenuView()),
           GoRoute(path: '/checkout', builder: (_, _) => const CheckoutView()),
+          GoRoute(
+            path: '/product',
+            builder: (context, state) {
+              final product = state.extra as Product;
+              return ProductDetailView(product: product);
+            },
+          ),
         ],
       ),
     ],
@@ -55,10 +65,7 @@ class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
 
   RouterNotifier(this._ref) {
-    _ref.listen(
-      authControllerProvider,
-      (_, _) => notifyListeners(),
-    );
+    _ref.listen(authControllerProvider, (_, _) => notifyListeners());
   }
 }
 
@@ -87,10 +94,26 @@ class _AppShell extends StatelessWidget {
         selectedIndex: selectedIndex,
         onDestinationSelected: (index) => context.go(_routes[index]),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Início'),
-          NavigationDestination(icon: Icon(Icons.receipt_long_outlined), selectedIcon: Icon(Icons.receipt_long), label: 'Pedidos'),
-          NavigationDestination(icon: Icon(Icons.shopping_cart_outlined), selectedIcon: Icon(Icons.shopping_cart), label: 'Carrinho'),
-          NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'Perfil'),
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: 'Início',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.receipt_long_outlined),
+            selectedIcon: Icon(Icons.receipt_long),
+            label: 'Pedidos',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.shopping_cart_outlined),
+            selectedIcon: Icon(Icons.shopping_cart),
+            label: 'Carrinho',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
         ],
       ),
     );

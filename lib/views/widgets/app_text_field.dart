@@ -53,7 +53,9 @@ class AppTextField extends StatelessWidget {
           onFieldSubmitted: onSubmitted,
           style: AppTypography.bodyLarge.copyWith(
             fontWeight: FontWeight.w600,
-            color: enabled ? AppColors.onSurface : AppColors.onSurfaceVariant.withValues(alpha: 0.6),
+            color: enabled
+                ? AppColors.onSurface
+                : AppColors.onSurfaceVariant.withValues(alpha: 0.6),
           ),
           decoration: InputDecoration(
             hintText: hint,
@@ -63,14 +65,20 @@ class AppTextField extends StatelessWidget {
             ),
             suffixIcon: suffixIcon,
             filled: true,
-            fillColor: enabled ? AppColors.surfaceContainerLow : AppColors.surfaceContainer,
+            fillColor: enabled
+                ? AppColors.surfaceContainerLow
+                : AppColors.surfaceContainer,
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
+              borderSide: BorderSide(
+                color: AppColors.outlineVariant.withValues(alpha: 0.2),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
+              borderSide: BorderSide(
+                color: AppColors.outlineVariant.withValues(alpha: 0.2),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),

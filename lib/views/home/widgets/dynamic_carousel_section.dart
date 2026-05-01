@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../models/product.dart';
 import '../../../models/merchandising_section.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../widgets/product_card.dart';
 import '../../widgets/section_header.dart';
 
@@ -39,6 +40,11 @@ class DynamicCarouselSection extends StatelessWidget {
                 margin: const EdgeInsets.only(right: 16),
                 child: ProductCard(
                   product: product,
+                  textColor: section.titleColor == 'white'
+                      ? Colors.white
+                      : (section.titleColor == 'primary'
+                            ? AppColors.primary
+                            : null),
                   onAddTap: (key) => onAddTap(product, key),
                 ),
               );

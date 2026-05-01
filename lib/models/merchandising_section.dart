@@ -1,12 +1,6 @@
 import 'product.dart';
 
-enum MerchandisingLayoutType {
-  hero,
-  bento,
-  horizontalList,
-  grid,
-  custom,
-}
+enum MerchandisingLayoutType { hero, bento, horizontalList, grid, custom }
 
 class MerchandisingSection {
   final int id;
@@ -17,6 +11,7 @@ class MerchandisingSection {
   final String customStyles;
   final int orderIndex;
   final bool active;
+  final String titleColor;
   final List<Product> products;
 
   MerchandisingSection({
@@ -28,6 +23,7 @@ class MerchandisingSection {
     this.customStyles = '',
     this.orderIndex = 0,
     this.active = true,
+    this.titleColor = 'black',
     required this.products,
   });
 
@@ -62,6 +58,7 @@ class MerchandisingSection {
       customStyles: json['custom_styles'] as String? ?? '',
       orderIndex: json['order_index'] as int? ?? 0,
       active: json['active'] as bool? ?? true,
+      titleColor: json['title_color'] as String? ?? 'black',
       products: (json['products'] as List? ?? [])
           .map((p) => Product.fromJson(p))
           .toList(),

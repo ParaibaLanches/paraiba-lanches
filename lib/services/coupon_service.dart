@@ -10,8 +10,9 @@ class CouponService {
   /// Fetches the list of active coupons assigned to the current customer.
   Future<List<Coupon>> getMyCoupons() async {
     final res = await _api.get(ApiConstants.coupons);
-    if (res['success'] != true) throw Exception(res['error'] ?? 'Erro ao buscar cupons');
-    
+    if (res['success'] != true)
+      throw Exception(res['error'] ?? 'Erro ao buscar cupons');
+
     return (res['data'] as List)
         .map((e) => Coupon.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -19,9 +20,10 @@ class CouponService {
 
   /// Validates a coupon code for the items in the current basket.
   Future<Coupon> validateCoupon(String code) async {
-    final res = await _api.post(ApiConstants.validateCoupon, data: {
-      'code': code.toUpperCase(),
-    });
+    final res = await _api.post(
+      ApiConstants.validateCoupon,
+      data: {'code': code.toUpperCase()},
+    );
 
     if (res['success'] != true) {
       throw Exception(res['error'] ?? 'Cupom inválido ou expirado');

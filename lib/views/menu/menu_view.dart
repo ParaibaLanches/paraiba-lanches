@@ -24,7 +24,10 @@ class MenuView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('PARAIBA LANCHES', style: AppTypography.headlineSmall.copyWith(color: AppColors.primary)),
+        title: Text(
+          'PARAIBA LANCHES',
+          style: AppTypography.headlineSmall.copyWith(color: AppColors.primary),
+        ),
         actions: [
           Stack(
             children: [
@@ -39,8 +42,18 @@ class MenuView extends ConsumerWidget {
                   top: 4,
                   child: Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                    child: Text('${cartNotifier.itemCount}', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                    decoration: const BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${cartNotifier.itemCount}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
             ],
@@ -48,11 +61,17 @@ class MenuView extends ConsumerWidget {
         ],
       ),
       body: menuAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
         error: (err, _) => Center(child: Text('Erro: $err')),
         data: (products) {
           final categories = categoriesAsync.value ?? [];
-          final filtered = selectedCategory == null ? products : products.where((p) => p.categoryId == selectedCategory).toList();
+          final filtered = selectedCategory == null
+              ? products
+              : products
+                    .where((p) => p.categoryId == selectedCategory)
+                    .toList();
 
           return CustomScrollView(
             slivers: [
@@ -70,20 +89,36 @@ class MenuView extends ConsumerWidget {
                           label: const Text('Todos'),
                           selected: selectedCategory == null,
                           selectedColor: AppColors.primary,
-                          labelStyle: TextStyle(color: selectedCategory == null ? Colors.white : AppColors.onSurface),
-                          onSelected: (_) => ref.read(mc.selectedCategoryProvider.notifier).select(null),
+                          labelStyle: TextStyle(
+                            color: selectedCategory == null
+                                ? Colors.white
+                                : AppColors.onSurface,
+                          ),
+                          onSelected: (_) => ref
+                              .read(mc.selectedCategoryProvider.notifier)
+                              .select(null),
                         ),
                       ),
-                      ...categories.map((cat) => Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: ChoiceChip(
-                              label: Text(cat.name[0].toUpperCase() + cat.name.substring(1)),
-                              selected: selectedCategory == cat.id,
-                              selectedColor: AppColors.primary,
-                              labelStyle: TextStyle(color: selectedCategory == cat.id ? Colors.white : AppColors.onSurface),
-                              onSelected: (_) => ref.read(mc.selectedCategoryProvider.notifier).select(cat.id),
+                      ...categories.map(
+                        (cat) => Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: ChoiceChip(
+                            label: Text(
+                              cat.name[0].toUpperCase() + cat.name.substring(1),
                             ),
-                          )),
+                            selected: selectedCategory == cat.id,
+                            selectedColor: AppColors.primary,
+                            labelStyle: TextStyle(
+                              color: selectedCategory == cat.id
+                                  ? Colors.white
+                                  : AppColors.onSurface,
+                            ),
+                            onSelected: (_) => ref
+                                .read(mc.selectedCategoryProvider.notifier)
+                                .select(cat.id),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -124,13 +159,20 @@ class MenuView extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppColors.surfaceContainerLowest,
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), offset: const Offset(0, -8), blurRadius: 24)],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    offset: const Offset(0, -8),
+                    blurRadius: 24,
+                  ),
+                ],
               ),
               child: SafeArea(
-                    child: AppButton(
-                      onPressed: () => context.go('/cart'),
-                      label: '${ref.read(cartProvider.notifier).itemCount} itens  •  ${CurrencyFormatter.format(ref.read(cartProvider.notifier).total)}',
-                    ),
+                child: AppButton(
+                  onPressed: () => context.go('/cart'),
+                  label:
+                      '${ref.read(cartProvider.notifier).itemCount} itens  •  ${CurrencyFormatter.format(ref.read(cartProvider.notifier).total)}',
+                ),
               ),
             ),
     );

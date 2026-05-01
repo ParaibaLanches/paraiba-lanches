@@ -36,27 +36,33 @@ class DynamicBentoSection extends StatelessWidget {
         if (item1 != null)
           _BentoCard(
             title: item1.name,
-            subtitle: item1.promotionLabel.isNotEmpty ? item1.promotionLabel : 'DESTAQUE',
+            subtitle: item1.promotionLabel.isNotEmpty
+                ? item1.promotionLabel
+                : 'DESTAQUE',
             description: item1.description,
-            price: item1.promotionalPrice != null 
-                ? CurrencyFormatter.format(item1.promotionalPrice!) 
+            price: item1.promotionalPrice != null
+                ? CurrencyFormatter.format(item1.promotionalPrice!)
                 : CurrencyFormatter.format(item1.price),
             imageUrl: ApiConstants.getImageUrl(item1.imageUrl) ?? '',
             color: AppColors.surfaceContainerLow,
+            titleColor: section.titleColor,
             onAddTap: (key) => onAddTap(item1, key),
           ),
         if (item2 != null) ...[
           const SizedBox(height: 16),
           _BentoCard(
             title: item2.name,
-            subtitle: item2.promotionLabel.isNotEmpty ? item2.promotionLabel : 'RECOMENDADO',
+            subtitle: item2.promotionLabel.isNotEmpty
+                ? item2.promotionLabel
+                : 'RECOMENDADO',
             description: item2.description,
-            price: item2.promotionalPrice != null 
-                ? CurrencyFormatter.format(item2.promotionalPrice!) 
+            price: item2.promotionalPrice != null
+                ? CurrencyFormatter.format(item2.promotionalPrice!)
                 : CurrencyFormatter.format(item2.price),
             imageUrl: ApiConstants.getImageUrl(item2.imageUrl) ?? '',
             color: AppColors.primary,
             onPrimary: true,
+            titleColor: section.titleColor,
             onAddTap: (key) => onAddTap(item2, key),
           ),
         ],
@@ -74,6 +80,7 @@ class _BentoCard extends StatelessWidget {
   final String imageUrl;
   final Color color;
   final bool onPrimary;
+  final String? titleColor;
   final Function(GlobalKey) onAddTap;
   final GlobalKey addButtonKey = GlobalKey();
 
@@ -85,13 +92,29 @@ class _BentoCard extends StatelessWidget {
     required this.imageUrl,
     required this.color,
     this.onPrimary = false,
+    this.titleColor,
     required this.onAddTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final textColor = onPrimary ? Colors.white : AppColors.onSurface;
-    final secondaryTextColor = onPrimary ? Colors.white70 : AppColors.onSurfaceVariant;
+    final defaultTextColor = onPrimary ? Colors.white : AppColors.onSurface;
+    final secondaryTextColor = onPrimary
+        ? Colors.white70
+        : AppColors.onSurfaceVariant;
+
+    // Determine the title color and shadow
+    final resolvedTitleColor = titleColor == 'white'
+        ? Colors.white
+        : (titleColor == 'primary'
+              ? (onPrimary ? Colors.white : AppColors.primary)
+              : (titleColor == 'black'
+                    ? AppColors.onSurface
+                    : defaultTextColor));
+
+    final isHighlighted =
+        resolvedTitleColor == Colors.white ||
+        resolvedTitleColor == AppColors.primary;
 
     return Container(
       width: double.infinity,
@@ -105,9 +128,13 @@ class _BentoCard extends StatelessWidget {
           Positioned(
             right: -20,
             bottom: -20,
-            child: imageUrl.isNotEmpty 
-              ? CachedNetworkImage(imageUrl: imageUrl, width: 220, fit: BoxFit.contain)
-              : const SizedBox(),
+            child: imageUrl.isNotEmpty
+                ? CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    width: 220,
+                    fit: BoxFit.contain,
+                  )
+                : const SizedBox(),
           ),
           Padding(
             padding: const EdgeInsets.all(24),
@@ -116,9 +143,14 @@ class _BentoCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: onPrimary ? Colors.white24 : AppColors.secondaryContainer,
+                    color: onPrimary
+                        ? Colors.white24
+                        : AppColors.secondaryContainer,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -132,19 +164,22 @@ class _BentoCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  title.toUpperCase(), 
+                  title.toUpperCase(),
                   style: AppTypography.headlineMedium.copyWith(
-                    fontWeight: FontWeight.w900, 
-                    color: textColor,
+                    fontWeight: FontWeight.w900,
+                    color: resolvedTitleColor,
                     letterSpacing: -0.5,
-                  )
+                    shadows: isHighlighted ? AppTypography.textShadows : null,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 SizedBox(
                   width: 140,
                   child: Text(
-                    description, 
-                    style: AppTypography.bodySmall.copyWith(color: secondaryTextColor), 
+                    description,
+                    style: AppTypography.bodySmall.copyWith(
+                      color: secondaryTextColor,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -152,14 +187,22 @@ class _BentoCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    Text(price, style: AppTypography.titleLarge.copyWith(color: textColor)),
+                    Text(
+                      price,
+                      style: AppTypography.titleLarge.copyWith(
+                        color: defaultTextColor,
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     GestureDetector(
                       key: addButtonKey,
                       onTap: () => onAddTap(addButtonKey),
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(color: textColor, shape: BoxShape.circle),
+                        decoration: BoxDecoration(
+                          color: defaultTextColor,
+                          shape: BoxShape.circle,
+                        ),
                         child: Icon(Icons.add, color: color, size: 16),
                       ),
                     ),

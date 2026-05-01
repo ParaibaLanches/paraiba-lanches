@@ -3,9 +3,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class ApiConstants {
   ApiConstants._();
 
-  static String get baseUrl => dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:8080';
-  static String get wsUrl => dotenv.env['WS_URL'] ?? 'ws://10.0.2.2:8080/ws/orders';
-
+  static String get baseUrl =>
+      dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:8080';
+  static String get wsUrl =>
+      dotenv.env['WS_URL'] ?? 'ws://10.0.2.2:8080/ws/orders';
 
   // Auth
   static const login = '/api/customer/login';
@@ -33,7 +34,7 @@ class ApiConstants {
   static String? getImageUrl(String? path) {
     if (path == null || path.isEmpty) return null;
     if (path.startsWith('http')) return path;
-    
+
     // Remove leading slash if present to avoid double slashes
     final cleanPath = path.startsWith('/') ? path.substring(1) : path;
     return '$baseUrl/$cleanPath';

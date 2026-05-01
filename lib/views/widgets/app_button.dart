@@ -29,20 +29,30 @@ class AppButton extends StatelessWidget {
       height: height,
       child: Container(
         decoration: BoxDecoration(
-          gradient: (onPressed == null || isLoading || isSecondary) 
-              ? null 
+          gradient: (onPressed == null || isLoading || isSecondary)
+              ? null
               : AppColors.primaryGradient,
-          color: isSecondary ? Colors.transparent : (onPressed == null || isLoading ? AppColors.outlineVariant.withValues(alpha: 0.3) : null),
+          color: isSecondary
+              ? Colors.transparent
+              : (onPressed == null || isLoading
+                    ? AppColors.outlineVariant.withValues(alpha: 0.3)
+                    : null),
           borderRadius: BorderRadius.circular(16),
-          border: isSecondary ? Border.all(color: AppColors.primary, width: 2) : null,
+          border: isSecondary
+              ? Border.all(color: AppColors.primary, width: 2)
+              : null,
         ),
         child: ElevatedButton(
           onPressed: isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
             shadowColor: Colors.transparent,
-            foregroundColor: isSecondary ? AppColors.primary : AppColors.onPrimary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            foregroundColor: isSecondary
+                ? AppColors.primary
+                : AppColors.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
           child: isLoading
               ? SizedBox(
@@ -56,7 +66,9 @@ class AppButton extends StatelessWidget {
               : Text(
                   label.toUpperCase(),
                   style: AppTypography.labelLarge.copyWith(
-                    color: isSecondary ? AppColors.primary : AppColors.onPrimary,
+                    color: isSecondary
+                        ? AppColors.primary
+                        : AppColors.onPrimary,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.1,
                   ),

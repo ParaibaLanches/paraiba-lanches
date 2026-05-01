@@ -8,11 +8,13 @@ class AppColors {
   static const primaryContainer = Color(0xFFFF7A35);
   static const primaryDim = Color(0xFF8A3400);
   static const onPrimary = Color(0xFFFFF0EA);
+  static const onPrimaryContainer = Color(0xFF2E0F00);
 
   // Secondary
   static const secondary = Color(0xFF735700);
   static const secondaryContainer = Color(0xFFFFCA3F);
   static const onSecondary = Color(0xFFFFFFFF);
+  static const onSecondaryContainer = Color(0xFF241A00);
 
   // Tertiary
   static const tertiary = Color(0xFF825000);
@@ -53,9 +55,9 @@ class AppColors {
   );
 
   // Order Status
-  static const statusPending   = Color(0xFFF59E0B); // amber
+  static const statusPending = Color(0xFFF59E0B); // amber
   static const statusPreparing = Color(0xFF3B82F6); // blue
-  static const statusReady     = Color(0xFF22C55E); // green
+  static const statusReady = Color(0xFF22C55E); // green
   static const statusDelivered = Color(0xFF6B7280); // gray
   static const statusCancelled = Color(0xFFEF4444); // red
 }

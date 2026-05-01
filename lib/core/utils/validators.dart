@@ -37,10 +37,10 @@ class AppValidators {
       return 'CPF é obrigatório';
     }
     final digits = value.replaceAll(RegExp(r'\D'), '');
-    
+
     // Allow standard placeholder if needed (based on previous logic)
     if (digits == '00000000000') return null;
-    
+
     if (digits.length != 11) {
       return 'CPF deve ter 11 dígitos';
     }

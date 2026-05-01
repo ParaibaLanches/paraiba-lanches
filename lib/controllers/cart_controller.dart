@@ -9,14 +9,18 @@ class CartController extends Notifier<List<CartItem>> {
   double get total => state.fold(0, (sum, item) => sum + item.subtotal);
   int get itemCount => state.fold(0, (sum, item) => sum + item.quantity);
 
-  void addProduct(Product product) {
+  void addProduct(Product product) => addItem(product);
+
+  void addItem(Product product, {int quantity = 1}) {
     final index = state.indexWhere((i) => i.product.id == product.id);
     if (index >= 0) {
       final updated = List<CartItem>.from(state);
-      updated[index] = updated[index].copyWith(quantity: updated[index].quantity + 1);
+      updated[index] = updated[index].copyWith(
+        quantity: updated[index].quantity + quantity,
+      );
       state = updated;
     } else {
-      state = [...state, CartItem(product: product)];
+      state = [...state, CartItem(product: product, quantity: quantity)];
     }
   }
 
@@ -49,5 +53,6 @@ class CartController extends Notifier<List<CartItem>> {
   void clear() => state = [];
 }
 
-final cartProvider = NotifierProvider<CartController, List<CartItem>>(CartController.new);
-
+final cartProvider = NotifierProvider<CartController, List<CartItem>>(
+  CartController.new,
+);

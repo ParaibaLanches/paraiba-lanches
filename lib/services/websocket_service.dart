@@ -108,7 +108,10 @@ class WebSocketService {
 
     // Exponential backoff capped at 30s
     _reconnectDelay = Duration(
-      seconds: (_reconnectDelay.inSeconds * 2).clamp(3, _maxReconnectDelay.inSeconds),
+      seconds: (_reconnectDelay.inSeconds * 2).clamp(
+        3,
+        _maxReconnectDelay.inSeconds,
+      ),
     );
   }
 

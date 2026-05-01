@@ -30,7 +30,9 @@ class OrdersView extends ConsumerWidget {
         ],
       ),
       body: ordersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
         error: (err, _) => Center(child: Text('Erro: $err')),
         data: (orders) {
           if (orders.isEmpty) {
@@ -38,9 +40,18 @@ class OrdersView extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.receipt_long_outlined, size: 64, color: AppColors.onSurfaceVariant),
+                  const Icon(
+                    Icons.receipt_long_outlined,
+                    size: 64,
+                    color: AppColors.onSurfaceVariant,
+                  ),
                   const SizedBox(height: 16),
-                  Text('Nenhum pedido ainda', style: AppTypography.headlineMedium.copyWith(color: AppColors.onSurfaceVariant)),
+                  Text(
+                    'Nenhum pedido ainda',
+                    style: AppTypography.headlineMedium.copyWith(
+                      color: AppColors.onSurfaceVariant,
+                    ),
+                  ),
                 ],
               ),
             );
@@ -74,7 +85,8 @@ class _LiveBadge extends StatefulWidget {
   State<_LiveBadge> createState() => _LiveBadgeState();
 }
 
-class _LiveBadgeState extends State<_LiveBadge> with SingleTickerProviderStateMixin {
+class _LiveBadgeState extends State<_LiveBadge>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulse;
   late Animation<double> _opacity;
 
@@ -86,9 +98,10 @@ class _LiveBadgeState extends State<_LiveBadge> with SingleTickerProviderStateMi
       duration: const Duration(milliseconds: 900),
     )..repeat(reverse: true);
 
-    _opacity = Tween<double>(begin: 0.35, end: 1.0).animate(
-      CurvedAnimation(parent: _pulse, curve: Curves.easeInOut),
-    );
+    _opacity = Tween<double>(
+      begin: 0.35,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _pulse, curve: Curves.easeInOut));
   }
 
   @override
@@ -121,7 +134,8 @@ class _LiveBadgeState extends State<_LiveBadge> with SingleTickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
-    final isActive = widget.status == WsConnectionStatus.connected ||
+    final isActive =
+        widget.status == WsConnectionStatus.connected ||
         widget.status == WsConnectionStatus.connecting;
 
     return Tooltip(
@@ -130,10 +144,7 @@ class _LiveBadgeState extends State<_LiveBadge> with SingleTickerProviderStateMi
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isActive)
-            FadeTransition(
-              opacity: _opacity,
-              child: _dot(),
-            )
+            FadeTransition(opacity: _opacity, child: _dot())
           else
             _dot(),
           const SizedBox(width: 4),
@@ -150,10 +161,10 @@ class _LiveBadgeState extends State<_LiveBadge> with SingleTickerProviderStateMi
   }
 
   Widget _dot() => Container(
-        width: 8,
-        height: 8,
-        decoration: BoxDecoration(color: _dotColor, shape: BoxShape.circle),
-      );
+    width: 8,
+    height: 8,
+    decoration: BoxDecoration(color: _dotColor, shape: BoxShape.circle),
+  );
 }
 
 // ──────────────────────────────────────────────
@@ -218,23 +229,46 @@ class _OrderCard extends StatelessWidget {
               Text(order.code, style: AppTypography.headlineMedium),
               AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: _statusColor(), borderRadius: BorderRadius.circular(20)),
-                child: Text(_statusLabel(), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: _statusColor(),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  _statusLabel(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          ...order.items.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 2),
-                child: Text('${item.quantity}x ${item.product?.name ?? "Produto"}', style: AppTypography.bodySmall),
-              )),
+          ...order.items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Text(
+                '${item.quantity}x ${item.product?.name ?? "Produto"}',
+                style: AppTypography.bodySmall,
+              ),
+            ),
+          ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Total do Pedido', style: AppTypography.bodySmall),
-              Text(CurrencyFormatter.format(order.total), style: AppTypography.titleMedium.copyWith(color: AppColors.primary)),
+              Text(
+                CurrencyFormatter.format(order.total),
+                style: AppTypography.titleMedium.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
             ],
           ),
         ],

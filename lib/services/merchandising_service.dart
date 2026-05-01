@@ -10,7 +10,7 @@ class MerchandisingService {
   Future<List<MerchandisingSection>> getHomeData() async {
     try {
       final response = await _api.get(ApiConstants.home);
-      
+
       if (response['success'] == true && response['data'] != null) {
         final List<dynamic> data = response['data'];
         return data.map((item) => MerchandisingSection.fromJson(item)).toList();

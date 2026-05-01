@@ -12,16 +12,18 @@ class CartAnimationHelper {
     VoidCallback? onComplete,
   }) {
     final OverlayState overlayState = Overlay.of(context);
-    
+
     // Get positions
-    final RenderBox? sourceBox = sourceKey.currentContext?.findRenderObject() as RenderBox?;
-    final RenderBox? destBox = destKey.currentContext?.findRenderObject() as RenderBox?;
-    
+    final RenderBox? sourceBox =
+        sourceKey.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? destBox =
+        destKey.currentContext?.findRenderObject() as RenderBox?;
+
     if (sourceBox == null || destBox == null) return;
-    
+
     final Offset sourceOffset = sourceBox.localToGlobal(Offset.zero);
     final Offset destOffset = destBox.localToGlobal(Offset.zero);
-    
+
     // Center of widgets
     final Offset start = Offset(
       sourceOffset.dx + sourceBox.size.width / 2,
@@ -33,7 +35,7 @@ class CartAnimationHelper {
     );
 
     late OverlayEntry entry;
-    
+
     entry = OverlayEntry(
       builder: (context) {
         return _FlyItem(
@@ -69,7 +71,8 @@ class _FlyItem extends StatefulWidget {
   State<_FlyItem> createState() => _FlyItemState();
 }
 
-class _FlyItemState extends State<_FlyItem> with SingleTickerProviderStateMixin {
+class _FlyItemState extends State<_FlyItem>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -101,21 +104,23 @@ class _FlyItemState extends State<_FlyItem> with SingleTickerProviderStateMixin 
       animation: _animation,
       builder: (context, child) {
         final t = _animation.value;
-        
+
         // Quadratic Bezier curve
         final Offset control = Offset(
-          widget.start.dx + (widget.end.dx - widget.start.dx) * 0.2, 
-          widget.start.dy - 120, 
+          widget.start.dx + (widget.end.dx - widget.start.dx) * 0.2,
+          widget.start.dy - 120,
         );
 
-        final double dx = (1 - t) * (1 - t) * widget.start.dx +
+        final double dx =
+            (1 - t) * (1 - t) * widget.start.dx +
             2 * (1 - t) * t * control.dx +
             t * t * widget.end.dx;
-        final double dy = (1 - t) * (1 - t) * widget.start.dy +
+        final double dy =
+            (1 - t) * (1 - t) * widget.start.dy +
             2 * (1 - t) * t * control.dy +
             t * t * widget.end.dy;
 
-        final double size = 48 * (1 - t * 0.4); 
+        final double size = 48 * (1 - t * 0.4);
 
         return Positioned(
           left: dx - size / 2,
@@ -132,7 +137,7 @@ class _FlyItemState extends State<_FlyItem> with SingleTickerProviderStateMixin 
                   blurRadius: 12,
                   spreadRadius: 2,
                   offset: const Offset(0, 4),
-                )
+                ),
               ],
               border: Border.all(color: Colors.white, width: 2),
             ),
@@ -143,7 +148,11 @@ class _FlyItemState extends State<_FlyItem> with SingleTickerProviderStateMixin 
                       imageUrl: ApiConstants.getImageUrl(widget.imageUrl!)!,
                       fit: BoxFit.cover,
                     )
-                  : const Icon(Icons.lunch_dining, size: 20, color: AppColors.primary),
+                  : const Icon(
+                      Icons.lunch_dining,
+                      size: 20,
+                      color: AppColors.primary,
+                    ),
             ),
           ),
         );

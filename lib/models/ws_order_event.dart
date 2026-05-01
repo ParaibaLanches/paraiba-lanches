@@ -13,9 +13,9 @@ class WsOrderEvent {
   const WsOrderEvent({required this.event, required this.data});
 
   factory WsOrderEvent.fromJson(Map<String, dynamic> json) => WsOrderEvent(
-        event: json['event'] as String,
-        data: Order.fromJson(json['data'] as Map<String, dynamic>),
-      );
+    event: json['event'] as String,
+    data: Order.fromJson(json['data'] as Map<String, dynamic>),
+  );
 
   bool get isNewOrder => event == 'new_order';
   bool get isOrderUpdated => event == 'order_updated';

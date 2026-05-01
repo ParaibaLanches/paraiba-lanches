@@ -10,7 +10,10 @@ final categoriesProvider = FutureProvider<List<Category>>((ref) async {
   return ref.read(menuServiceProvider).getCategories();
 });
 
-final selectedCategoryProvider = NotifierProvider<SelectedCategoryNotifier, int?>(SelectedCategoryNotifier.new);
+final selectedCategoryProvider =
+    NotifierProvider<SelectedCategoryNotifier, int?>(
+      SelectedCategoryNotifier.new,
+    );
 
 class SelectedCategoryNotifier extends Notifier<int?> {
   @override

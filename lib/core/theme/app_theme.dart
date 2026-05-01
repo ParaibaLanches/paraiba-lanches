@@ -1,12 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../models/app_info.dart';
 import 'app_colors.dart';
 
 class AppTheme {
   AppTheme._();
 
-  static ThemeData get light {
+  static ThemeData createTheme(AppInfo? info) {
+    final hFont = info?.headlineFont ?? 'Epilogue';
+    final bFont = info?.bodyFont ?? 'Plus Jakarta Sans';
+
+    // Helper to get Google Font safely
+    TextStyle getH(
+      double size,
+      FontWeight weight, {
+      double? spacing,
+      Color? color,
+    }) {
+      try {
+        return GoogleFonts.getFont(
+          hFont,
+          fontSize: size,
+          fontWeight: weight,
+          letterSpacing: spacing,
+          color: color,
+        );
+      } catch (e) {
+        return GoogleFonts.epilogue(
+          fontSize: size,
+          fontWeight: weight,
+          letterSpacing: spacing,
+          color: color,
+        );
+      }
+    }
+
+    TextStyle getB(
+      double size,
+      FontWeight weight, {
+      double? spacing,
+      Color? color,
+    }) {
+      try {
+        return GoogleFonts.getFont(
+          bFont,
+          fontSize: size,
+          fontWeight: weight,
+          letterSpacing: spacing,
+          color: color,
+        );
+      } catch (e) {
+        return GoogleFonts.plusJakartaSans(
+          fontSize: size,
+          fontWeight: weight,
+          letterSpacing: spacing,
+          color: color,
+        );
+      }
+    }
+
+    TextTheme getTextTheme() {
+      try {
+        return GoogleFonts.getTextTheme(bFont);
+      } catch (e) {
+        return GoogleFonts.plusJakartaSansTextTheme();
+      }
+    }
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -35,12 +96,12 @@ class AppTheme {
         surfaceContainerHigh: AppColors.surfaceContainerHigh,
         surfaceContainerHighest: AppColors.surfaceContainerHighest,
       ),
-      textTheme: GoogleFonts.plusJakartaSansTextTheme().copyWith(
-        displayLarge: GoogleFonts.epilogue(fontSize: 36, fontWeight: FontWeight.w900),
-        displayMedium: GoogleFonts.epilogue(fontSize: 30, fontWeight: FontWeight.w800),
-        headlineLarge: GoogleFonts.epilogue(fontSize: 24, fontWeight: FontWeight.w800),
-        headlineMedium: GoogleFonts.epilogue(fontSize: 20, fontWeight: FontWeight.w700),
-        headlineSmall: GoogleFonts.epilogue(fontSize: 18, fontWeight: FontWeight.w700),
+      textTheme: getTextTheme().copyWith(
+        displayLarge: getH(36, FontWeight.w900),
+        displayMedium: getH(30, FontWeight.w800),
+        headlineLarge: getH(24, FontWeight.w800),
+        headlineMedium: getH(20, FontWeight.w700),
+        headlineSmall: getH(18, FontWeight.w700),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
@@ -48,11 +109,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
-        titleTextStyle: GoogleFonts.epilogue(
-          fontSize: 20,
-          fontWeight: FontWeight.w800,
-          color: AppColors.onSurface,
-        ),
+        titleTextStyle: getH(20, FontWeight.w800, color: AppColors.onSurface),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -60,41 +117,48 @@ class AppTheme {
           foregroundColor: AppColors.onPrimary,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          textStyle: GoogleFonts.plusJakartaSans(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
+          textStyle: getB(16, FontWeight.w700),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.onSurface,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           side: const BorderSide(color: AppColors.outlineVariant),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surfaceContainerLow,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.4), width: 2),
+          borderSide: BorderSide(
+            color: AppColors.primary.withValues(alpha: 0.4),
+            width: 2,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
-        labelStyle: GoogleFonts.plusJakartaSans(
-          fontSize: 12,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 1.5,
+        labelStyle: getB(
+          12,
+          FontWeight.w800,
+          spacing: 1.5,
           color: AppColors.onSurfaceVariant,
         ),
       ),
@@ -107,7 +171,7 @@ class AppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.surfaceContainerLow,
         selectedColor: AppColors.primary,
-        labelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 13),
+        labelStyle: getB(13, FontWeight.w600),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),

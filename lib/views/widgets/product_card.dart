@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/constants/api_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
@@ -12,6 +13,7 @@ class ProductCard extends StatelessWidget {
   final MerchandisingLayoutType layoutType;
   final Function(GlobalKey)? onAddTap;
   final VoidCallback? onTap;
+  final Color? textColor;
   final GlobalKey addButtonKey = GlobalKey();
 
   ProductCard({
@@ -20,6 +22,7 @@ class ProductCard extends StatelessWidget {
     this.layoutType = MerchandisingLayoutType.horizontalList,
     this.onAddTap,
     this.onTap,
+    this.textColor,
   });
 
   @override
@@ -27,14 +30,16 @@ class ProductCard extends StatelessWidget {
     final isGrid = layoutType == MerchandisingLayoutType.grid;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => context.push('/product', extra: product),
       child: Container(
         margin: EdgeInsets.only(bottom: isGrid ? 0 : 16),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: AppColors.outlineVariant.withValues(alpha: 0.1),
+          ),
         ),
         child: isGrid ? _buildVerticalLayout() : _buildHorizontalLayout(),
       ),
@@ -92,28 +97,39 @@ class ProductCard extends StatelessWidget {
       child: SizedBox(
         width: width,
         height: height,
-        child: product.imageUrl.isNotEmpty
-            ? CachedNetworkImage(
-                imageUrl: ApiConstants.getImageUrl(product.imageUrl)!,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(color: AppColors.surfaceContainer),
-                errorWidget: (context, url, error) => Container(
+        child: Hero(
+          tag: 'product_image_${product.id}',
+          child: product.imageUrl.isNotEmpty
+              ? CachedNetworkImage(
+                  imageUrl: ApiConstants.getImageUrl(product.imageUrl)!,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) =>
+                      Container(color: AppColors.surfaceContainer),
+                  errorWidget: (context, url, error) => Container(
+                    color: AppColors.surfaceContainer,
+                    child: const Icon(Icons.broken_image, size: 24),
+                  ),
+                )
+              : Container(
                   color: AppColors.surfaceContainer,
-                  child: const Icon(Icons.broken_image, size: 24),
+                  child: const Icon(Icons.lunch_dining, size: 24),
                 ),
-              )
-            : Container(
-                color: AppColors.surfaceContainer,
-                child: const Icon(Icons.lunch_dining, size: 24),
-              ),
+        ),
       ),
     );
   }
 
   Widget _buildTitle({bool centered = false}) {
+    final color = textColor ?? AppColors.onSurface;
+    final isWhite = color == Colors.white;
+
     return Text(
       product.name,
-      style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.bold),
+      style: AppTypography.titleMedium.copyWith(
+        fontWeight: FontWeight.bold,
+        color: color,
+        shadows: isWhite ? AppTypography.textShadows : null,
+      ),
       textAlign: centered ? TextAlign.center : TextAlign.start,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
@@ -145,7 +161,9 @@ class ProductCard extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             CurrencyFormatter.format(product.promotionalPrice!),
-            style: AppTypography.titleLarge.copyWith(color: AppColors.secondary),
+            style: AppTypography.titleLarge.copyWith(
+              color: AppColors.secondary,
+            ),
           ),
         ],
       );

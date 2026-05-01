@@ -38,13 +38,30 @@ class DynamicHeroSection extends StatelessWidget {
           Positioned(
             right: -80,
             bottom: -40,
-            child: heroProduct.imageUrl.isNotEmpty 
-              ? CachedNetworkImage(
-                  imageUrl: ApiConstants.getImageUrl(heroProduct.imageUrl)!,
-                  width: 480,
-                  fit: BoxFit.contain,
-                )
-              : const Icon(Icons.fastfood, size: 200, color: Colors.white24),
+            child: heroProduct.imageUrl.isNotEmpty
+                ? CachedNetworkImage(
+                    imageUrl: ApiConstants.getImageUrl(heroProduct.imageUrl)!,
+                    width: 480,
+                    fit: BoxFit.contain,
+                  )
+                : const Icon(Icons.fastfood, size: 200, color: Colors.white24),
+          ),
+          // Gradient overlay for text readability
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: const [0.0, 0.6, 1.0],
+                  colors: [
+                    AppColors.surfaceContainerLow.withValues(alpha: 0.95),
+                    AppColors.surfaceContainerLow.withValues(alpha: 0.6),
+                    AppColors.surfaceContainerLow.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(32),
@@ -54,7 +71,10 @@ class DynamicHeroSection extends StatelessWidget {
               children: [
                 if (heroProduct.promotionLabel.isNotEmpty)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
                       color: AppColors.secondaryContainer,
@@ -63,7 +83,11 @@ class DynamicHeroSection extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.workspace_premium, size: 14, color: AppColors.secondary),
+                        const Icon(
+                          Icons.workspace_premium,
+                          size: 14,
+                          color: AppColors.secondary,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           heroProduct.promotionLabel.toUpperCase(),
@@ -77,7 +101,10 @@ class DynamicHeroSection extends StatelessWidget {
                   )
                 else
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
                       color: AppColors.primaryContainer,
@@ -98,6 +125,16 @@ class DynamicHeroSection extends StatelessWidget {
                     height: 0.9,
                     letterSpacing: -2,
                     fontSize: heroProduct.name.length > 10 ? 44 : 52,
+                    color: section.titleColor == 'white'
+                        ? Colors.white
+                        : (section.titleColor == 'primary'
+                              ? AppColors.primary
+                              : AppColors.onSurface),
+                    shadows:
+                        (section.titleColor == 'white' ||
+                            section.titleColor == 'primary')
+                        ? AppTypography.textShadows
+                        : null,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -105,7 +142,10 @@ class DynamicHeroSection extends StatelessWidget {
                   width: 200,
                   child: Text(
                     heroProduct.description,
-                    style: AppTypography.bodySmall,
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.onSurface,
+                      fontWeight: FontWeight.w500,
+                    ),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -114,10 +154,15 @@ class DynamicHeroSection extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      heroProduct.promotionalPrice != null 
-                        ? CurrencyFormatter.format(heroProduct.promotionalPrice!)
-                        : CurrencyFormatter.format(heroProduct.price),
-                      style: AppTypography.headlineLarge.copyWith(color: AppColors.primary),
+                      heroProduct.promotionalPrice != null
+                          ? CurrencyFormatter.format(
+                              heroProduct.promotionalPrice!,
+                            )
+                          : CurrencyFormatter.format(heroProduct.price),
+                      style: AppTypography.headlineLarge.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton(
@@ -125,10 +170,16 @@ class DynamicHeroSection extends StatelessWidget {
                       onPressed: () => onAddTap(heroProduct, addButtonKey),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                       ),
-                      child: const Icon(Icons.add_shopping_cart, size: 20, color: Colors.white),
+                      child: const Icon(
+                        Icons.add_shopping_cart,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),

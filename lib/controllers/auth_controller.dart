@@ -10,9 +10,21 @@ class AuthState {
   final bool isAuthenticated;
   final String? error;
 
-  const AuthState({this.user, this.isLoading = false, this.isInitialized = false, this.isAuthenticated = false, this.error});
+  const AuthState({
+    this.user,
+    this.isLoading = false,
+    this.isInitialized = false,
+    this.isAuthenticated = false,
+    this.error,
+  });
 
-  AuthState copyWith({CustomerProfile? user, bool? isLoading, bool? isInitialized, bool? isAuthenticated, String? error}) {
+  AuthState copyWith({
+    CustomerProfile? user,
+    bool? isLoading,
+    bool? isInitialized,
+    bool? isAuthenticated,
+    String? error,
+  }) {
     return AuthState(
       user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
@@ -32,9 +44,16 @@ class AuthController extends Notifier<AuthState> {
     try {
       await ref.read(authServiceProvider).login(email, password);
       final profile = await ref.read(authServiceProvider).getProfile();
-      state = state.copyWith(user: profile, isAuthenticated: true, isLoading: false);
+      state = state.copyWith(
+        user: profile,
+        isAuthenticated: true,
+        isLoading: false,
+      );
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString().replaceAll('Exception: ', ''));
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString().replaceAll('Exception: ', ''),
+      );
     }
   }
 
@@ -55,24 +74,29 @@ class AuthController extends Notifier<AuthState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await ref.read(authServiceProvider).register(
-        name: name,
-        email: email,
-        password: password,
-        phone: phone,
-        document: document,
-        address: address,
-        cep: cep,
-        street: street,
-        number: number,
-        neighborhood: neighborhood,
-        city: city,
-        state: stateAbbreviation,
-        complement: complement,
-      );
+      await ref
+          .read(authServiceProvider)
+          .register(
+            name: name,
+            email: email,
+            password: password,
+            phone: phone,
+            document: document,
+            address: address,
+            cep: cep,
+            street: street,
+            number: number,
+            neighborhood: neighborhood,
+            city: city,
+            state: stateAbbreviation,
+            complement: complement,
+          );
       await login(email, password);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString().replaceAll('Exception: ', ''));
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString().replaceAll('Exception: ', ''),
+      );
     }
   }
 
@@ -84,7 +108,11 @@ class AuthController extends Notifier<AuthState> {
     }
     try {
       final profile = await ref.read(authServiceProvider).getProfile();
-      state = state.copyWith(user: profile, isAuthenticated: true, isInitialized: true);
+      state = state.copyWith(
+        user: profile,
+        isAuthenticated: true,
+        isInitialized: true,
+      );
     } catch (e) {
       debugPrint('[Auth] Erro ao carregar perfil: $e');
       await ref.read(authServiceProvider).logout();
@@ -112,23 +140,28 @@ class AuthController extends Notifier<AuthState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await ref.read(authServiceProvider).updateProfile(
-        name: name,
-        phone: phone,
-        document: document,
-        address: address,
-        cep: cep,
-        street: street,
-        number: number,
-        neighborhood: neighborhood,
-        city: city,
-        state: stateAbbreviation,
-        complement: complement,
-      );
+      await ref
+          .read(authServiceProvider)
+          .updateProfile(
+            name: name,
+            phone: phone,
+            document: document,
+            address: address,
+            cep: cep,
+            street: street,
+            number: number,
+            neighborhood: neighborhood,
+            city: city,
+            state: stateAbbreviation,
+            complement: complement,
+          );
       final profile = await ref.read(authServiceProvider).getProfile();
       state = state.copyWith(user: profile, isLoading: false);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString().replaceAll('Exception: ', ''));
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString().replaceAll('Exception: ', ''),
+      );
     }
   }
 
@@ -139,7 +172,10 @@ class AuthController extends Notifier<AuthState> {
       final profile = await ref.read(authServiceProvider).getProfile();
       state = state.copyWith(user: profile, isLoading: false);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString().replaceAll('Exception: ', ''));
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString().replaceAll('Exception: ', ''),
+      );
     }
   }
 
@@ -148,4 +184,6 @@ class AuthController extends Notifier<AuthState> {
   }
 }
 
-final authControllerProvider = NotifierProvider<AuthController, AuthState>(AuthController.new);
+final authControllerProvider = NotifierProvider<AuthController, AuthState>(
+  AuthController.new,
+);

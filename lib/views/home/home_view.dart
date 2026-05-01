@@ -30,7 +30,7 @@ class HomeView extends ConsumerWidget {
 
     void addToCart(Product product, GlobalKey sourceKey) {
       cartNotifier.addProduct(product);
-      
+
       final cartKey = ref.read(cartIconKeyProvider);
       CartAnimationHelper.runFlyToCartAnimation(
         context: context,
@@ -186,7 +186,8 @@ class HomeView extends ConsumerWidget {
                             ...sections.map(
                               (section) => SectionFactory(
                                 section: section,
-                                onAddTap: (product, key) => addToCart(product, key),
+                                onAddTap: (product, key) =>
+                                    addToCart(product, key),
                               ),
                             ),
                           ],
@@ -286,16 +287,13 @@ class HomeView extends ConsumerWidget {
                   return SliverPadding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final product = filtered[index];
-                          return ProductCard(
-                            product: product,
-                            onAddTap: (key) => addToCart(product, key),
-                          );
-                        },
-                        childCount: filtered.length,
-                      ),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final product = filtered[index];
+                        return ProductCard(
+                          product: product,
+                          onAddTap: (key) => addToCart(product, key),
+                        );
+                      }, childCount: filtered.length),
                     ),
                   );
                 },

@@ -102,20 +102,28 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
   String _formatName(String name) {
     if (name.isEmpty) return name;
-    return name.toLowerCase().split(' ').map((word) {
-      if (word.isEmpty) return word;
-      // Capitalize if first word OR length > 3
-      if (word.length > 3) {
-        return word[0].toUpperCase() + word.substring(1);
-      }
-      return word;
-    }).join(' ');
+    return name
+        .toLowerCase()
+        .split(' ')
+        .map((word) {
+          if (word.isEmpty) return word;
+          // Capitalize if first word OR length > 3
+          if (word.length > 3) {
+            return word[0].toUpperCase() + word.substring(1);
+          }
+          return word;
+        })
+        .join(' ');
   }
 
   void _loadUserData(dynamic user) {
     _nameController.text = _formatName(user.name);
-    _phoneController.text = user.phone.isEmpty ? '' : _phoneFormatter.maskText(user.phone);
-    _documentController.text = user.document.isEmpty ? '' : _cpfCnpjFormatter.maskText(user.document);
+    _phoneController.text = user.phone.isEmpty
+        ? ''
+        : _phoneFormatter.maskText(user.phone);
+    _documentController.text = user.document.isEmpty
+        ? ''
+        : _cpfCnpjFormatter.maskText(user.document);
 
     // Load Address Fields
     _cepController.text = user.cep;
@@ -188,7 +196,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                         decoration: BoxDecoration(
                           color: AppColors.surfaceContainerHigh,
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.primary, width: 2),
+                          border: Border.all(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                           image: avatarUrl != null
                               ? DecorationImage(
                                   image: NetworkImage(avatarUrl),
@@ -210,8 +221,15 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                           bottom: 0,
                           child: Container(
                             padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                            child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                            decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
                     ],
@@ -230,11 +248,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 validator: AppValidators.name,
               ),
               const SizedBox(height: 16),
-              AppTextField(
-                label: 'E-mail',
-                hint: user.email,
-                enabled: false,
-              ),
+              AppTextField(label: 'E-mail', hint: user.email, enabled: false),
               const SizedBox(height: 16),
               AppTextField(
                 label: 'Telefone',
@@ -264,7 +278,11 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 children: [
                   Text('Endereço de Entrega', style: AppTypography.titleMedium),
                   if (_isFetchingCep)
-                    const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                    const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -337,7 +355,9 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                     if (!_formKey.currentState!.validate()) return;
                     final messenger = ScaffoldMessenger.of(context);
                     final formattedName = _formatName(_nameController.text);
-                    await ref.read(authControllerProvider.notifier).updateProfile(
+                    await ref
+                        .read(authControllerProvider.notifier)
+                        .updateProfile(
                           name: formattedName,
                           phone: _phoneController.text,
                           document: _documentController.text,
@@ -348,14 +368,17 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                           city: _cityController.text,
                           stateAbbreviation: _stateController.text,
                           complement: _complementController.text,
-                          address: '${_streetController.text}, ${_numberController.text} - ${_cityController.text}',
+                          address:
+                              '${_streetController.text}, ${_numberController.text} - ${_cityController.text}',
                         );
                     if (!mounted) return;
                     final error = ref.read(authControllerProvider).error;
                     if (error == null) {
                       setState(() => _isEditing = false);
                       messenger.showSnackBar(
-                        const SnackBar(content: Text('Perfil atualizado com sucesso!')),
+                        const SnackBar(
+                          content: Text('Perfil atualizado com sucesso!'),
+                        ),
                       );
                     }
                   },
@@ -373,7 +396,9 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 const SizedBox(height: 16),
                 Text(
                   authState.error!,
-                  style: AppTypography.bodySmall.copyWith(color: AppColors.error),
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.error,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],

@@ -17,7 +17,9 @@ class WsStatusNotifier extends Notifier<WsConnectionStatus> {
 }
 
 final wsConnectionStatusProvider =
-    NotifierProvider<WsStatusNotifier, WsConnectionStatus>(WsStatusNotifier.new);
+    NotifierProvider<WsStatusNotifier, WsConnectionStatus>(
+      WsStatusNotifier.new,
+    );
 
 // ──────────────────────────────────────────────
 // Raw WebSocket events stream
@@ -88,8 +90,9 @@ class OrdersNotifier extends AsyncNotifier<List<Order>> {
   }
 }
 
-final myOrdersProvider =
-    AsyncNotifierProvider<OrdersNotifier, List<Order>>(OrdersNotifier.new);
+final myOrdersProvider = AsyncNotifierProvider<OrdersNotifier, List<Order>>(
+  OrdersNotifier.new,
+);
 
 // ──────────────────────────────────────────────
 // Order detail (unchanged)

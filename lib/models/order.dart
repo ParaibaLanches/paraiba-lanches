@@ -20,14 +20,14 @@ class OrderItem {
   });
 
   factory OrderItem.fromJson(Map<String, dynamic> json) => OrderItem(
-        id: json['id'] as int,
-        orderId: json['order_id'] as int,
-        productId: json['product_id'] as int,
-        product: json['product'] != null ? Product.fromJson(json['product']) : null,
-        quantity: json['quantity'] as int,
-        unitPrice: (json['unit_price'] as num).toDouble(),
-        notes: json['notes'] as String? ?? '',
-      );
+    id: json['id'] as int,
+    orderId: json['order_id'] as int,
+    productId: json['product_id'] as int,
+    product: json['product'] != null ? Product.fromJson(json['product']) : null,
+    quantity: json['quantity'] as int,
+    unitPrice: (json['unit_price'] as num).toDouble(),
+    notes: json['notes'] as String? ?? '',
+  );
 }
 
 class Payment {
@@ -38,10 +38,10 @@ class Payment {
   Payment({required this.id, required this.method, required this.amount});
 
   factory Payment.fromJson(Map<String, dynamic> json) => Payment(
-        id: json['id'] as int,
-        method: json['method'] as String,
-        amount: (json['amount'] as num).toDouble(),
-      );
+    id: json['id'] as int,
+    method: json['method'] as String,
+    amount: (json['amount'] as num).toDouble(),
+  );
 }
 
 class Order {
@@ -70,21 +70,23 @@ class Order {
   });
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
-        id: json['id'] as int,
-        code: json['code'] as String,
-        orderType: json['order_type'] as String,
-        status: json['status'] as String,
-        total: (json['total'] as num).toDouble(),
-        notes: json['notes'] as String? ?? '',
-        items: (json['items'] as List<dynamic>?)
-                ?.map((e) => OrderItem.fromJson(e as Map<String, dynamic>))
-                .toList() ??
-            [],
-        payments: (json['payments'] as List<dynamic>?)
-                ?.map((e) => Payment.fromJson(e as Map<String, dynamic>))
-                .toList() ??
-            [],
-        createdAt: json['created_at'] as String,
-        updatedAt: json['updated_at'] as String,
-      );
+    id: json['id'] as int,
+    code: json['code'] as String,
+    orderType: json['order_type'] as String,
+    status: json['status'] as String,
+    total: (json['total'] as num).toDouble(),
+    notes: json['notes'] as String? ?? '',
+    items:
+        (json['items'] as List<dynamic>?)
+            ?.map((e) => OrderItem.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [],
+    payments:
+        (json['payments'] as List<dynamic>?)
+            ?.map((e) => Payment.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [],
+    createdAt: json['created_at'] as String,
+    updatedAt: json['updated_at'] as String,
+  );
 }
