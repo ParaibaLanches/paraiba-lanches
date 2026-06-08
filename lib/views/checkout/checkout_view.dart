@@ -114,13 +114,17 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
       ref.read(checkoutProvider.notifier).setDeliveryFee(0);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Pedido ${order.code} criado!'),
-            backgroundColor: AppColors.primary,
-          ),
-        );
-        context.go('/orders');
+        if (order.paymentIntent != null && order.paymentIntent!.pixCopyPaste != null) {
+          context.go('/order/${order.id}/pix', extra: order.paymentIntent);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Pedido ${order.code} criado!'),
+              backgroundColor: AppColors.primary,
+            ),
+          );
+          context.go('/orders');
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -366,6 +370,13 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
               label: 'Cartão de Crédito',
               icon: Icons.credit_card,
               value: 'credit_card',
+              selected: _paymentMethod,
+              onTap: (v) => setState(() => _paymentMethod = v),
+            ),
+            _PaymentOption(
+              label: 'Cartão de Débito',
+              icon: Icons.credit_card_outlined,
+              value: 'debit_card',
               selected: _paymentMethod,
               onTap: (v) => setState(() => _paymentMethod = v),
             ),

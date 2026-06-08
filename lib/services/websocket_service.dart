@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
+import 'package:flutter_client_sse/flutter_client_sse.dart';
 
 import '../core/constants/api_constants.dart';
+import '../core/storage/token_storage.dart';
 import '../models/ws_order_event.dart';
 
 enum WsConnectionStatus { connecting, connected, disconnected }
 
-/// Manages the WebSocket connection to `/ws/orders`.
+/// Manages the SSE connection to Next.js `/api/customer/stream/orders`.
 ///
 /// Exposes [onEvent] as a broadcast Stream and [connectionStatus] for
-/// UI indicators. Reconnects automatically with exponential backoff.
+/// UI indicators. Reconnects automatically on failure.
 class WebSocketService {
-  WebSocketChannel? _channel;
   StreamSubscription? _subscription;
   Timer? _reconnectTimer;
 
@@ -25,7 +25,7 @@ class WebSocketService {
   Duration _reconnectDelay = const Duration(seconds: 3);
   static const Duration _maxReconnectDelay = Duration(seconds: 30);
 
-  /// Stream of parsed order events from the WebSocket.
+  /// Stream of parsed order events from SSE.
   Stream<WsOrderEvent> get onEvent => _eventController.stream;
 
   /// Stream of connection status changes.
@@ -40,8 +40,7 @@ class WebSocketService {
   void disconnect() {
     _reconnectTimer?.cancel();
     _subscription?.cancel();
-    _channel?.sink.close();
-    _channel = null;
+    SSEClient.unsubscribeFromSSE();
     _setStatus(WsConnectionStatus.disconnected);
   }
 
@@ -52,47 +51,65 @@ class WebSocketService {
     _statusController.close();
   }
 
-  void _doConnect() {
+  Future<void> _doConnect() async {
     if (_disposed) return;
 
     try {
-      final uri = Uri.parse(ApiConstants.wsUrl);
-      _channel = WebSocketChannel.connect(uri);
+      final token = await TokenStorage.getAccessToken() ?? '';
+      
+      final url = '${ApiConstants.sseUrl}?token=$token';
 
-      _subscription = _channel!.stream.listen(
-        _onMessage,
+      _subscription = SSEClient.subscribeToSSE(
+        method: SSERequestType.GET,
+        url: url,
+        header: {
+          "Accept": "text/event-stream",
+          "Cache-Control": "no-cache",
+        },
+      ).listen(
+        (event) {
+          if (event.data != null && event.data!.isNotEmpty) {
+            _onMessage(event.data!);
+          }
+        },
         onError: _onError,
         onDone: _onDone,
         cancelOnError: false,
       );
 
-      // Mark connected after the stream starts (no handshake confirmation from server)
       _setStatus(WsConnectionStatus.connected);
-      _reconnectDelay = const Duration(seconds: 3); // Reset backoff on success
+      _reconnectDelay = const Duration(seconds: 3); // Reset backoff
     } catch (e) {
-      debugPrint('[WS] Connection error: $e');
+      debugPrint('[SSE] Connection error: $e');
       _scheduleReconnect();
     }
   }
 
-  void _onMessage(dynamic raw) {
+  void _onMessage(String raw) {
     try {
-      final json = jsonDecode(raw as String) as Map<String, dynamic>;
+      final json = jsonDecode(raw) as Map<String, dynamic>;
+      
+      if (json['type'] == 'connected') {
+        debugPrint('[SSE] Server acknowledged connection.');
+        return;
+      }
+      
       final event = WsOrderEvent.fromJson(json);
       _eventController.add(event);
     } catch (e) {
-      debugPrint('[WS] Parse error: $e | raw: $raw');
+      debugPrint('[SSE] Parse error: $e | raw: $raw');
     }
   }
 
   void _onError(Object error) {
-    debugPrint('[WS] Stream error: $error');
+    debugPrint('[SSE] Stream error: $error');
     _setStatus(WsConnectionStatus.disconnected);
+    SSEClient.unsubscribeFromSSE();
     _scheduleReconnect();
   }
 
   void _onDone() {
-    debugPrint('[WS] Connection closed.');
+    debugPrint('[SSE] Connection closed.');
     _setStatus(WsConnectionStatus.disconnected);
     _scheduleReconnect();
   }
@@ -100,7 +117,7 @@ class WebSocketService {
   void _scheduleReconnect() {
     if (_disposed) return;
     _reconnectTimer?.cancel();
-    debugPrint('[WS] Reconnecting in ${_reconnectDelay.inSeconds}s...');
+    debugPrint('[SSE] Reconnecting in ${_reconnectDelay.inSeconds}s...');
 
     _reconnectTimer = Timer(_reconnectDelay, () {
       if (!_disposed) _doConnect();

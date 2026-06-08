@@ -31,19 +31,43 @@ class AppValidators {
     return null;
   }
 
-  /// Validates CPF (11 digits)
+  /// Validates CPF (11 digits + mathematical verification)
   static String? cpf(String? value) {
     if (value == null || value.isEmpty) {
       return 'CPF é obrigatório';
     }
     final digits = value.replaceAll(RegExp(r'\D'), '');
 
-    // Allow standard placeholder if needed (based on previous logic)
-    if (digits == '00000000000') return null;
-
     if (digits.length != 11) {
       return 'CPF deve ter 11 dígitos';
     }
+
+    // Ignore known invalid sequences
+    if (RegExp(r'^(\d)\1*$').hasMatch(digits)) {
+      return 'CPF inválido';
+    }
+
+    // Validação matemática do CPF (Dígitos verificadores)
+    List<int> numbers = digits.split('').map((e) => int.parse(e)).toList();
+
+    int sum1 = 0;
+    for (int i = 0; i < 9; i++) {
+      sum1 += numbers[i] * (10 - i);
+    }
+    int digit1 = 11 - (sum1 % 11);
+    if (digit1 >= 10) digit1 = 0;
+
+    int sum2 = 0;
+    for (int i = 0; i < 10; i++) {
+      sum2 += numbers[i] * (11 - i);
+    }
+    int digit2 = 11 - (sum2 % 11);
+    if (digit2 >= 10) digit2 = 0;
+
+    if (numbers[9] != digit1 || numbers[10] != digit2) {
+      return 'CPF inválido';
+    }
+
     return null;
   }
 

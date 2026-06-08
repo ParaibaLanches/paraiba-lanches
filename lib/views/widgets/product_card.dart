@@ -59,11 +59,11 @@ class ProductCard extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildTitle(centered: true),
-              _buildDescription(centered: true),
+              _buildTitle(centered: false),
+              _buildDescription(centered: false),
               const SizedBox(height: 4),
               _buildPrice(),
             ],
@@ -76,19 +76,18 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildVerticalLayout() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(child: _buildImage(double.infinity, double.infinity)),
         const SizedBox(height: 12),
-        _buildTitle(centered: true),
+        _buildTitle(centered: false),
         const SizedBox(height: 4),
-        _buildDescription(centered: true),
+        _buildDescription(centered: false),
         const SizedBox(height: 8),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildPrice(),
-            const SizedBox(width: 8),
             _buildAddButton(),
           ],
         ),

@@ -87,15 +87,27 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     if (!_isEditing) return;
     final cep = _cepController.text.replaceAll(RegExp(r'\D'), '');
     if (cep.length == 8) {
+      // Evitar requisições duplicadas
+      if (_isFetchingCep) return;
+
       setState(() => _isFetchingCep = true);
       final data = await ViaCepService.fetchCep(cep);
       setState(() => _isFetchingCep = false);
 
-      if (data != null && mounted) {
+      if (!mounted) return;
+
+      if (data != null) {
         _streetController.text = data['logradouro'] ?? '';
         _neighborhoodController.text = data['bairro'] ?? '';
         _cityController.text = data['localidade'] ?? '';
         _stateController.text = data['uf'] ?? '';
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('CEP não encontrado ou inválido.'),
+            backgroundColor: AppColors.error,
+          ),
+        );
       }
     }
   }

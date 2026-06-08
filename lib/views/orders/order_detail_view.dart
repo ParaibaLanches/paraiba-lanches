@@ -345,7 +345,7 @@ class OrderDetailView extends ConsumerWidget {
           Icons.payment,
           'Pagamento',
           currentOrder.payments.isNotEmpty
-              ? currentOrder.payments.first.method
+              ? _getPaymentMethodLabel(currentOrder.payments.first.method)
               : 'N/A',
         ),
         _buildInfoRow(
@@ -357,6 +357,21 @@ class OrderDetailView extends ConsumerWidget {
           _buildInfoRow(Icons.notes, 'Observações', currentOrder.notes),
       ],
     );
+  }
+
+  String _getPaymentMethodLabel(String method) {
+    switch (method) {
+      case 'pix':
+        return 'Pix';
+      case 'credit_card':
+        return 'Cartão de Crédito';
+      case 'debit_card':
+        return 'Cartão de Débito';
+      case 'cash':
+        return 'Dinheiro';
+      default:
+        return method;
+    }
   }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {

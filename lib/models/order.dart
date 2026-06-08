@@ -1,5 +1,29 @@
 import 'product.dart';
 
+class PaymentIntent {
+  final String id;
+  final String clientSecret;
+  final String status;
+  final String? qrCodeUrl;
+  final String? pixCopyPaste;
+
+  PaymentIntent({
+    required this.id,
+    required this.clientSecret,
+    required this.status,
+    this.qrCodeUrl,
+    this.pixCopyPaste,
+  });
+
+  factory PaymentIntent.fromJson(Map<String, dynamic> json) => PaymentIntent(
+    id: json['id'] as String,
+    clientSecret: json['clientSecret'] as String,
+    status: json['status'] as String,
+    qrCodeUrl: json['qrCodeUrl'] as String?,
+    pixCopyPaste: json['pixCopyPaste'] as String?,
+  );
+}
+
 class OrderItem {
   final int id;
   final int orderId;
@@ -58,6 +82,7 @@ class Order {
   final String notes;
   final List<OrderItem> items;
   final List<Payment> payments;
+  final PaymentIntent? paymentIntent;
   final String createdAt;
   final String updatedAt;
 
@@ -73,6 +98,7 @@ class Order {
     this.notes = '',
     this.items = const [],
     this.payments = const [],
+    this.paymentIntent,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -97,6 +123,7 @@ class Order {
             ?.map((e) => Payment.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [],
+    paymentIntent: json['payment_intent'] != null ? PaymentIntent.fromJson(json['payment_intent']) : null,
     createdAt: json['created_at'] as String,
     updatedAt: json['updated_at'] as String,
   );

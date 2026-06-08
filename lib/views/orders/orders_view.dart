@@ -24,12 +24,6 @@ class OrdersView extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Meus Pedidos', style: AppTypography.headlineMedium),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: _LiveBadge(status: connStatus),
-            ),
-          ],
           bottom: TabBar(
             indicatorColor: AppColors.primary,
             labelColor: AppColors.primary,

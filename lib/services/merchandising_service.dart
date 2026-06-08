@@ -12,8 +12,22 @@ class MerchandisingService {
       final response = await _api.get(ApiConstants.home);
 
       if (response['success'] == true && response['data'] != null) {
-        final List<dynamic> data = response['data'];
-        return data.map((item) => MerchandisingSection.fromJson(item)).toList();
+        final data = response['data'] as Map<String, dynamic>;
+        
+        // Convert the "featured_products" list from Next.js into a MerchandisingSection
+        final featuredProductsJson = data['featured_products'] as List<dynamic>? ?? [];
+        
+        if (featuredProductsJson.isEmpty) return [];
+
+        final section = MerchandisingSection.fromJson({
+          'id': 1,
+          'title': 'Destaques',
+          'subtitle': 'Os mais pedidos',
+          'layout_type': 'horizontal_list',
+          'products': featuredProductsJson,
+        });
+
+        return [section];
       }
       return [];
     } catch (e) {

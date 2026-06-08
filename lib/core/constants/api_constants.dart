@@ -4,16 +4,16 @@ class ApiConstants {
   ApiConstants._();
 
   static String get baseUrl =>
-      dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:8080';
-  static String get wsUrl =>
-      dotenv.env['WS_URL'] ?? 'ws://10.0.2.2:8080/ws/orders';
+      dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:3000';
+  static String get sseUrl =>
+      dotenv.env['SSE_URL'] ?? 'http://10.0.2.2:3000/api/customer/stream/orders';
 
   // Auth
-  static const login = '/api/customer/login';
-  static const register = '/api/customer/register';
+  static const login = '/api/customer/auth/login';
+  static const register = '/api/customer/auth/register';
   static const profile = '/api/customer/profile';
-  static const updateAvatar = '/api/customer/profile/image';
-  static const refresh = '/api/auth/refresh';
+  static const updateAvatar = '/api/customer/profile';
+  static const refresh = '/api/customer/auth/login'; // No refresh implemented yet
 
   // Menu
   static const home = '/api/customer/home';
