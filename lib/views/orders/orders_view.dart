@@ -17,7 +17,6 @@ class OrdersView extends ConsumerWidget {
     ref.watch(orderEventsProvider);
 
     final ordersAsync = ref.watch(myOrdersProvider);
-    final connStatus = ref.watch(wsConnectionStatusProvider);
 
     return DefaultTabController(
       length: 2,
