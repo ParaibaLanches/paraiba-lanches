@@ -18,11 +18,18 @@ import '../widgets/product_card.dart';
 import '../widgets/section_header.dart';
 import 'widgets/section_factory.dart';
 
-class HomeView extends ConsumerWidget {
+class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends ConsumerState<HomeView> {
+  int _displayLimit = 10;
+
+  @override
+  Widget build(BuildContext context) {
     final menuAsync = ref.watch(mc.menuProvider);
     final categoriesAsync = ref.watch(mc.categoriesProvider);
     final selectedCategory = ref.watch(mc.selectedCategoryProvider);
@@ -30,6 +37,15 @@ class HomeView extends ConsumerWidget {
     final cart = ref.watch(cartProvider);
     final cartNotifier = ref.read(cartProvider.notifier);
     final ordersAsync = ref.watch(myOrdersProvider);
+
+    // Reset limit when category changes
+    ref.listen(mc.selectedCategoryProvider, (previous, next) {
+      if (previous != next) {
+        setState(() {
+          _displayLimit = 10;
+        });
+      }
+    });
 
     void addToCart(Product product, GlobalKey sourceKey) {
       cartNotifier.addProduct(product);
@@ -287,16 +303,39 @@ class HomeView extends ConsumerWidget {
                             .where((p) => p.categoryId == selectedCategory)
                             .toList();
 
+                  final displayList = filtered.take(_displayLimit).toList();
+                  final hasMore = filtered.length > _displayLimit;
+
                   return SliverPadding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
-                        final product = filtered[index];
+                        if (index == displayList.length) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 24),
+                            child: Center(
+                              child: TextButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    _displayLimit += 10;
+                                  });
+                                },
+                                icon: const Icon(Icons.expand_more, color: AppColors.primary),
+                                label: Text(
+                                  'Ver mais itens',
+                                  style: AppTypography.labelLarge.copyWith(color: AppColors.primary),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        
+                        final product = displayList[index];
                         return ProductCard(
                           product: product,
                           onAddTap: (key) => addToCart(product, key),
                         );
-                      }, childCount: filtered.length),
+                      }, childCount: displayList.length + (hasMore ? 1 : 0)),
                     ),
                   );
                 },
