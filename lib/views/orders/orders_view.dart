@@ -114,9 +114,9 @@ class _OrderList extends StatelessWidget {
       color: AppColors.primary,
       onRefresh: () => ref.read(myOrdersProvider.notifier).refresh(),
       child: ListView.separated(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: orders.length,
-        separatorBuilder: (_, _) => const SizedBox(height: 12),
+        separatorBuilder: (_, _) => const SizedBox(height: 0),
         itemBuilder: (context, index) => _OrderCard(order: orders[index]),
       ),
     );
@@ -265,72 +265,74 @@ class _OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => context.push('/order-detail', extra: order),
-      borderRadius: BorderRadius.circular(12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.all(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppColors.outlineVariant.withValues(alpha: 0.3),
+          color: AppColors.surface,
+          border: Border(
+            bottom: BorderSide(
+              color: AppColors.outlineVariant.withValues(alpha: 0.15),
+            ),
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  order.code,
-                  style: AppTypography.headlineMedium.copyWith(
-                    fontWeight: FontWeight.w900,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        order.code,
+                        style: AppTypography.titleMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _statusColor().withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          _statusLabel().toUpperCase(),
+                          style: TextStyle(
+                            color: _statusColor(),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Text(
-                  CurrencyFormatter.format(order.total),
-                  style: AppTypography.titleLarge.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w900,
+                  const SizedBox(height: 4),
+                  Text(
+                    '${order.items.length} ite${order.items.length == 1 ? 'm' : 'ns'} • ${order.orderType == 'delivery' ? 'Entrega' : 'Retirada'}',
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.outline,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _statusColor().withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: _statusColor().withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Text(
-                    _statusLabel().toUpperCase(),
-                    style: TextStyle(
-                      color: _statusColor(),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
-                  color: AppColors.outlineVariant,
-                ),
-              ],
+            Text(
+              CurrencyFormatter.format(order.total),
+              style: AppTypography.titleMedium.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: AppColors.outlineVariant,
             ),
           ],
         ),

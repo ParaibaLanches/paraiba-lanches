@@ -253,7 +253,7 @@ class _ProductDetailViewState extends ConsumerState<ProductDetailView> {
           ),
           const SizedBox(width: 8),
           Text(
-            ing.name,
+            ing.name.isNotEmpty ? '${ing.name[0].toUpperCase()}${ing.name.substring(1)}' : ing.name,
             style: AppTypography.bodyMedium.copyWith(
               color: AppColors.onSurfaceVariant,
               fontWeight: FontWeight.w500,
