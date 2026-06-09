@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/cart/presentation/providers/cart_providers.dart';
-import '../../controllers/orders_controller.dart';
+import '../../features/orders/presentation/providers/orders_providers.dart';
+
 import '../../controllers/menu_controller.dart' as mc;
 import '../../controllers/providers.dart';
 import '../../core/constants/api_constants.dart';
@@ -12,7 +13,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/utils/cart_animation_helper.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../models/product.dart';
-import '../../models/order.dart';
+import '../../features/orders/domain/entities/order_entity.dart';
 import '../widgets/app_button.dart';
 import '../widgets/product_card.dart';
 import '../widgets/section_header.dart';
@@ -380,7 +381,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget _buildActiveOrderBar(
     BuildContext context,
     WidgetRef ref,
-    List<Order> orders,
+    List<OrderEntity> orders,
   ) {
     final activeOrders = orders
         .where(

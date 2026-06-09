@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../controllers/orders_controller.dart';
+import '../../features/orders/presentation/providers/orders_providers.dart';
+
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/currency_formatter.dart';
-import '../../models/order.dart';
+import '../../features/orders/domain/entities/order_entity.dart';
 import '../../services/websocket_service.dart';
 
 class OrdersView extends ConsumerWidget {
@@ -76,7 +77,7 @@ class OrdersView extends ConsumerWidget {
 }
 
 class _OrderList extends StatelessWidget {
-  final List<Order> orders;
+  final List<OrderEntity> orders;
   final String emptyLabel;
   final WidgetRef ref;
 
@@ -223,7 +224,7 @@ class _LiveBadgeState extends State<_LiveBadge>
 // ──────────────────────────────────────────────
 
 class _OrderCard extends StatelessWidget {
-  final Order order;
+  final OrderEntity order;
 
   const _OrderCard({required this.order});
 

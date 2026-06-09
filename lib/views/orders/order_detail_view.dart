@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../controllers/orders_controller.dart';
+import '../../features/orders/presentation/providers/orders_providers.dart';
+
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/currency_formatter.dart';
-import '../../models/order.dart';
+import '../../features/orders/domain/entities/order_entity.dart';
 
 class OrderDetailView extends ConsumerWidget {
-  final Order order;
+  final OrderEntity order;
 
   const OrderDetailView({super.key, required this.order});
 
@@ -34,7 +35,7 @@ class OrderDetailView extends ConsumerWidget {
 
   Widget _buildContent(
     BuildContext context,
-    Order currentOrder, {
+    OrderEntity currentOrder, {
     bool isLoading = false,
     String? error,
   }) {
@@ -58,7 +59,7 @@ class OrderDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusHeader(Order currentOrder) {
+  Widget _buildStatusHeader(OrderEntity currentOrder) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -91,7 +92,7 @@ class OrderDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusTimeline(Order currentOrder) {
+  Widget _buildStatusTimeline(OrderEntity currentOrder) {
     final steps = ['pending', 'preparing', 'ready', 'delivered'];
     final currentStepIndex = steps.indexOf(currentOrder.status);
 
@@ -207,7 +208,7 @@ class OrderDetailView extends ConsumerWidget {
     }
   }
 
-  Widget _buildItemsSection(Order currentOrder) {
+  Widget _buildItemsSection(OrderEntity currentOrder) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -269,7 +270,7 @@ class OrderDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummarySection(Order currentOrder) {
+  Widget _buildSummarySection(OrderEntity currentOrder) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -323,7 +324,7 @@ class OrderDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildInfoSection(Order currentOrder) {
+  Widget _buildInfoSection(OrderEntity currentOrder) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

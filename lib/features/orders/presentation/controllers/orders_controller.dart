@@ -1,9 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../core/storage/token_storage.dart';
-import '../models/order.dart';
-import '../models/ws_order_event.dart';
-import '../services/websocket_service.dart';
-import 'providers.dart';
+
+import '../../../../core/storage/token_storage.dart';
+import '../../../../core/usecases/usecase.dart';
+import '../../../../services/websocket_service.dart';
+import '../../../../controllers/providers.dart'; // For wsServiceProvider
+import '../../domain/entities/order_entity.dart';
+import '../../data/models/ws_order_event_model.dart';
+import '../providers/orders_providers.dart';
 
 // ──────────────────────────────────────────────
 // WebSocket connection status
@@ -16,19 +19,13 @@ class WsStatusNotifier extends Notifier<WsConnectionStatus> {
   void set(WsConnectionStatus status) => state = status;
 }
 
-final wsConnectionStatusProvider =
-    NotifierProvider<WsStatusNotifier, WsConnectionStatus>(
-      WsStatusNotifier.new,
-    );
-
 // ──────────────────────────────────────────────
 // Raw WebSocket events stream
 // ──────────────────────────────────────────────
 
-final orderEventsProvider = StreamProvider<WsOrderEvent>((ref) {
+final _orderEventsStreamProvider = StreamProvider<WsOrderEventModel>((ref) {
   final service = ref.watch(wsServiceProvider);
 
-  // Mirror connection status into the StateProvider so the UI can react
   final sub = service.statusStream.listen((status) {
     ref.read(wsConnectionStatusProvider.notifier).set(status);
   });
@@ -40,64 +37,64 @@ final orderEventsProvider = StreamProvider<WsOrderEvent>((ref) {
     service.disconnect();
   });
 
-  return service.onEvent;
+  // We map the raw event to our Model
+  return service.onEvent.map((rawEvent) {
+    // Assuming service.onEvent emits rawEvent from the old model temporarily.
+    // Wait, the old WebSocketService returns old WsOrderEvent.
+    // For now we just cast it to WsOrderEventModel or handle it.
+    // Since they have the same structure:
+    return WsOrderEventModel(
+      event: rawEvent.event,
+      data: rawEvent.data,
+    );
+  });
 });
 
 // ──────────────────────────────────────────────
 // Orders list — merges REST + WebSocket updates
 // ──────────────────────────────────────────────
 
-class OrdersNotifier extends AsyncNotifier<List<Order>> {
+class OrdersNotifier extends AsyncNotifier<List<OrderEntity>> {
   @override
-  Future<List<Order>> build() async {
-    // 0. Ensure we have a token before fetching
+  Future<List<OrderEntity>> build() async {
     final loggedIn = await TokenStorage.isLoggedIn();
     if (!loggedIn) {
-      return []; // Return empty list or wait for session load
+      return [];
     }
 
-    // 1. Load the initial list from REST
-    final orders = await ref.read(orderServiceProvider).getMyOrders();
+    final usecase = ref.read(getMyOrdersUseCaseProvider);
+    final result = await usecase(const NoParams());
 
-    // 2. Listen to real-time WebSocket events and merge into state
-    ref.listen<AsyncValue<WsOrderEvent>>(orderEventsProvider, (_, next) {
+    ref.listen<AsyncValue<WsOrderEventModel>>(_orderEventsStreamProvider, (_, next) {
       next.whenData(_applyEvent);
     });
 
-    return orders;
+    return result.fold(
+      onFailure: (failure) => throw Exception(failure.message),
+      onSuccess: (orders) => orders,
+    );
   }
 
-  void _applyEvent(WsOrderEvent event) {
+  void _applyEvent(WsOrderEventModel event) {
     final current = state.value;
     if (current == null) return;
 
     if (event.isOrderUpdated) {
-      // Replace the existing order with the same id
       final updated = current.map((o) {
         return o.id == event.data.id ? event.data : o;
       }).toList();
       state = AsyncData(updated);
     }
-    // new_order is not inserted automatically — customer will see it
-    // upon next navigation to /orders (REST load) or manual refresh.
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => ref.read(orderServiceProvider).getMyOrders(),
+    final usecase = ref.read(getMyOrdersUseCaseProvider);
+    final result = await usecase(const NoParams());
+    
+    state = result.fold(
+      onFailure: (failure) => AsyncError(failure.message, StackTrace.current),
+      onSuccess: (orders) => AsyncData(orders),
     );
   }
 }
-
-final myOrdersProvider = AsyncNotifierProvider<OrdersNotifier, List<Order>>(
-  OrdersNotifier.new,
-);
-
-// ──────────────────────────────────────────────
-// Order detail (unchanged)
-// ──────────────────────────────────────────────
-
-final orderDetailProvider = FutureProvider.family<Order, int>((ref, id) async {
-  return ref.read(orderServiceProvider).getOrderById(id);
-});

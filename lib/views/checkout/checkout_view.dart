@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/cart/presentation/providers/cart_providers.dart';
 import '../../controllers/checkout_controller.dart';
+import '../../features/orders/presentation/providers/orders_providers.dart';
+import '../../features/orders/domain/usecases/calculate_delivery_fee_usecase.dart';
+import '../../features/orders/domain/usecases/create_order_usecase.dart';
 import '../../controllers/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
@@ -63,10 +66,12 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
     checkoutNotifier.setLoading(true);
 
     try {
-      final fee = await ref
-          .read(orderServiceProvider)
-          .calculateDeliveryFee(address);
-      checkoutNotifier.setDeliveryFee(fee);
+      final calculateUsecase = ref.read(calculateDeliveryFeeUseCaseProvider);
+      final result = await calculateUsecase(CalculateDeliveryFeeParams(address));
+      result.fold(
+        onFailure: (f) => throw Exception(f.message),
+        onSuccess: (fee) => checkoutNotifier.setDeliveryFee(fee),
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -100,9 +105,8 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
 
     setState(() => _isSubmitting = true);
     try {
-      final order = await ref
-          .read(orderServiceProvider)
-          .createOrder(
+      final createUsecase = ref.read(createOrderUseCaseProvider);
+      final result = await createUsecase(CreateOrderParams(
             items: cartItems,
             paymentMethod: _paymentMethod,
             paymentAmount: checkoutState.calculateTotal(cartNotifier.total),
@@ -110,24 +114,30 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
             notes: _orderType == 'delivery' ? 'Endereço: ${user?.fullAddress}' : '',
             deliveryFee: checkoutState.deliveryFee,
             discountAmount: checkoutState.appliedCoupon?.calculateDiscount(cartNotifier.total) ?? 0,
-          );
-      cartNotifier.clear();
-      ref.read(checkoutProvider.notifier).setCoupon(null);
-      ref.read(checkoutProvider.notifier).setDeliveryFee(0);
+      ));
 
-      if (mounted) {
-        if (order.paymentIntent != null && order.paymentIntent!.pixCopyPaste != null) {
-          context.go('/order/${order.id}/pix', extra: order.paymentIntent);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Pedido ${order.code} criado!'),
-              backgroundColor: AppColors.primary,
-            ),
-          );
-          context.go('/orders');
-        }
-      }
+      result.fold(
+        onFailure: (f) => throw Exception(f.message),
+        onSuccess: (order) {
+          cartNotifier.clear();
+          ref.read(checkoutProvider.notifier).setCoupon(null);
+          ref.read(checkoutProvider.notifier).setDeliveryFee(0);
+
+          if (mounted) {
+            if (order.paymentIntent != null && order.paymentIntent!.pixCopyPaste != null) {
+              context.go('/order/${order.id}/pix', extra: order.paymentIntent);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Pedido ${order.code} criado!'),
+                  backgroundColor: AppColors.primary,
+                ),
+              );
+              context.go('/orders');
+            }
+          }
+        },
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

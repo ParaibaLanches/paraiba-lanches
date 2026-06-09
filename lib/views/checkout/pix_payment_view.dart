@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
-import '../../models/order.dart';
+import '../../features/orders/domain/entities/payment_intent_entity.dart';
 
 class PixPaymentView extends StatelessWidget {
-  final PaymentIntent paymentIntent;
+  final PaymentIntentEntity paymentIntent;
 
   const PixPaymentView({super.key, required this.paymentIntent});
 

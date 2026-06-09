@@ -13,7 +13,8 @@ import '../../views/profile/profile_view.dart';
 import '../../views/checkout/pix_payment_view.dart';
 import '../../views/product/product_detail_view.dart';
 import '../../models/product.dart';
-import '../../models/order.dart';
+import '../../features/orders/domain/entities/order_entity.dart';
+import '../../features/orders/domain/entities/payment_intent_entity.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final notifier = RouterNotifier(ref);
@@ -64,17 +65,19 @@ final routerProvider = Provider<GoRouter>((ref) {
             },
           ),
           GoRoute(
-            path: '/order-detail',
+            path: '/order-detail/:id',
             builder: (context, state) {
-              final order = state.extra as Order;
-              return OrderDetailView(order: order);
+              final order = state.extra as OrderEntity?;
+              return OrderDetailView(
+                order: order!,
+              );
             },
           ),
           GoRoute(
             path: '/order/:id/pix',
             builder: (context, state) {
-              final paymentIntent = state.extra as PaymentIntent;
-              return PixPaymentView(paymentIntent: paymentIntent);
+              final intent = state.extra as PaymentIntentEntity;
+              return PixPaymentView(paymentIntent: intent);
             },
           ),
         ],
