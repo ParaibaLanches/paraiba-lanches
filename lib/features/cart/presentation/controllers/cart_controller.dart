@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/cart_item.dart';
-import '../models/product.dart';
+import '../../domain/entities/cart_item_entity.dart';
+import '../../../../models/product.dart';
 
-class CartController extends Notifier<List<CartItem>> {
+class CartController extends Notifier<List<CartItemEntity>> {
   @override
-  List<CartItem> build() => [];
+  List<CartItemEntity> build() => [];
 
   double get total => state.fold(0, (sum, item) => sum + item.subtotal);
   int get itemCount => state.fold(0, (sum, item) => sum + item.quantity);
@@ -14,13 +14,13 @@ class CartController extends Notifier<List<CartItem>> {
   void addItem(Product product, {int quantity = 1}) {
     final index = state.indexWhere((i) => i.product.id == product.id);
     if (index >= 0) {
-      final updated = List<CartItem>.from(state);
+      final updated = List<CartItemEntity>.from(state);
       updated[index] = updated[index].copyWith(
         quantity: updated[index].quantity + quantity,
       );
       state = updated;
     } else {
-      state = [...state, CartItem(product: product, quantity: quantity)];
+      state = [...state, CartItemEntity(product: product, quantity: quantity)];
     }
   }
 
@@ -52,7 +52,3 @@ class CartController extends Notifier<List<CartItem>> {
 
   void clear() => state = [];
 }
-
-final cartProvider = NotifierProvider<CartController, List<CartItem>>(
-  CartController.new,
-);

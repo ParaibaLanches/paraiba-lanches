@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/coupon.dart';
-import 'cart_controller.dart';
+import '../features/cart/presentation/providers/cart_providers.dart';
 
 class CheckoutState {
   final Coupon? appliedCoupon;

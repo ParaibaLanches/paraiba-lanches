@@ -1,5 +1,5 @@
 import '../core/constants/api_constants.dart';
-import '../models/cart_item.dart';
+import '../features/cart/domain/entities/cart_item_entity.dart';
 import '../models/order.dart';
 import '../core/network/api_service.dart';
 
@@ -9,7 +9,7 @@ class OrderService {
   OrderService(this._api);
 
   Future<Order> createOrder({
-    required List<CartItem> items,
+    required List<CartItemEntity> items,
     required String paymentMethod,
     required double paymentAmount,
     String orderType = 'local',

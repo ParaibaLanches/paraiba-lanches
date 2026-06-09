@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
-import '../../controllers/cart_controller.dart';
+import '../../features/cart/presentation/providers/cart_providers.dart';
 import '../../controllers/orders_controller.dart';
 import '../../controllers/menu_controller.dart' as mc;
 import '../../controllers/providers.dart';
