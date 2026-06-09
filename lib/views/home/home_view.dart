@@ -5,14 +5,14 @@ import 'package:go_router/go_router.dart';
 import '../../features/cart/presentation/providers/cart_providers.dart';
 import '../../features/orders/presentation/providers/orders_providers.dart';
 
-import '../../controllers/menu_controller.dart' as mc;
+import '../../features/menu/presentation/providers/menu_providers.dart' as mc;
 import '../../controllers/providers.dart';
 import '../../core/constants/api_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/cart_animation_helper.dart';
 import '../../core/utils/currency_formatter.dart';
-import '../../models/product.dart';
+import '../../features/menu/domain/entities/product_entity.dart';
 import '../../features/orders/domain/entities/order_entity.dart';
 import '../widgets/app_button.dart';
 import '../widgets/product_card.dart';
@@ -48,8 +48,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
       }
     });
 
-    void addToCart(Product product, GlobalKey sourceKey) {
-      cartNotifier.addProduct(product);
+    void addToCart(ProductEntity product, GlobalKey sourceKey) {
+      cartNotifier.addProductEntity(product);
 
       final cartKey = ref.read(cartIconKeyProvider);
       CartAnimationHelper.runFlyToCartAnimation(

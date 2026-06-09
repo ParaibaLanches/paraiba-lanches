@@ -1,10 +1,10 @@
-import '../../../../models/product.dart';
+import '../../../../features/menu/domain/entities/product_entity.dart';
 
 class OrderItemEntity {
   final int id;
   final int orderId;
   final int productId;
-  final Product? product;
+  final ProductEntity? product;
   final int quantity;
   final double unitPrice;
   final String notes;

@@ -6,7 +6,7 @@ import 'package:flutter_client_sse/flutter_client_sse.dart';
 
 import '../core/constants/api_constants.dart';
 import '../core/storage/token_storage.dart';
-import '../models/ws_order_event.dart';
+import '../features/orders/data/models/ws_order_event_model.dart';
 
 enum WsConnectionStatus { connecting, connected, disconnected }
 
@@ -18,7 +18,7 @@ class WebSocketService {
   StreamSubscription? _subscription;
   Timer? _reconnectTimer;
 
-  final _eventController = StreamController<WsOrderEvent>.broadcast();
+  final _eventController = StreamController<WsOrderEventModel>.broadcast();
   final _statusController = StreamController<WsConnectionStatus>.broadcast();
 
   bool _disposed = false;
@@ -26,7 +26,7 @@ class WebSocketService {
   static const Duration _maxReconnectDelay = Duration(seconds: 30);
 
   /// Stream of parsed order events from SSE.
-  Stream<WsOrderEvent> get onEvent => _eventController.stream;
+  Stream<WsOrderEventModel> get onEvent => _eventController.stream;
 
   /// Stream of connection status changes.
   Stream<WsConnectionStatus> get statusStream => _statusController.stream;
@@ -94,7 +94,7 @@ class WebSocketService {
         return;
       }
       
-      final event = WsOrderEvent.fromJson(json);
+      final event = WsOrderEventModel.fromJson(json);
       _eventController.add(event);
     } catch (e) {
       debugPrint('[SSE] Parse error: $e | raw: $raw');

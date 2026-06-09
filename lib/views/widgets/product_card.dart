@@ -5,11 +5,11 @@ import '../../core/constants/api_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/currency_formatter.dart';
-import '../../models/product.dart';
+import '../../features/menu/domain/entities/product_entity.dart';
 import '../../models/merchandising_section.dart';
 
 class ProductCard extends StatelessWidget {
-  final Product product;
+  final ProductEntity product;
   final MerchandisingLayoutType layoutType;
   final Function(GlobalKey)? onAddTap;
   final VoidCallback? onTap;

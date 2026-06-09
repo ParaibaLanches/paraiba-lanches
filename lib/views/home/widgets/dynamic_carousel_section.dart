@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../models/product.dart';
+import '../../../features/menu/domain/entities/product_entity.dart';
 import '../../../models/merchandising_section.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../widgets/product_card.dart';
@@ -7,7 +7,7 @@ import '../../widgets/section_header.dart';
 
 class DynamicCarouselSection extends StatelessWidget {
   final MerchandisingSection section;
-  final Function(Product, GlobalKey) onAddTap;
+  final Function(ProductEntity, GlobalKey) onAddTap;
 
   const DynamicCarouselSection({
     super.key,

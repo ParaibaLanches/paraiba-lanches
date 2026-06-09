@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../models/product.dart';
+import '../../../features/menu/domain/entities/product_entity.dart';
 import '../../../models/merchandising_section.dart';
 import 'dynamic_bento_section.dart';
 import 'dynamic_carousel_section.dart';
@@ -8,7 +8,7 @@ import 'dynamic_grid_section.dart';
 
 class SectionFactory extends StatelessWidget {
   final MerchandisingSection section;
-  final Function(Product, GlobalKey) onAddTap;
+  final Function(ProductEntity, GlobalKey) onAddTap;
 
   const SectionFactory({
     super.key,

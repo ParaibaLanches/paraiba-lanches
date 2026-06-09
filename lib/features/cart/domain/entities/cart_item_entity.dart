@@ -1,7 +1,7 @@
-import '../../../../models/product.dart';
+import '../../../../features/menu/domain/entities/product_entity.dart';
 
 class CartItemEntity {
-  final Product product;
+  final ProductEntity product;
   final int quantity;
   final String notes;
 
@@ -14,7 +14,7 @@ class CartItemEntity {
   double get subtotal => product.price * quantity;
 
   CartItemEntity copyWith({
-    Product? product,
+    ProductEntity? product,
     int? quantity,
     String? notes,
   }) {

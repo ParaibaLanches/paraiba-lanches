@@ -7,11 +7,11 @@ import '../../core/constants/api_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/currency_formatter.dart';
-import '../../models/ingredient.dart';
-import '../../models/product.dart';
+import '../../features/menu/domain/entities/ingredient_entity.dart';
+import '../../features/menu/domain/entities/product_entity.dart';
 
 class ProductDetailView extends ConsumerStatefulWidget {
-  final Product product;
+  final ProductEntity product;
   final String? heroTag;
 
   const ProductDetailView({super.key, required this.product, this.heroTag});
@@ -233,7 +233,7 @@ class _ProductDetailViewState extends ConsumerState<ProductDetailView> {
     );
   }
 
-  Widget _buildIngredientChip(Ingredient ing) {
+  Widget _buildIngredientChip(IngredientEntity ing) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(

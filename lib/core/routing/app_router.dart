@@ -12,7 +12,7 @@ import '../../views/orders/order_detail_view.dart';
 import '../../views/profile/profile_view.dart';
 import '../../views/checkout/pix_payment_view.dart';
 import '../../views/product/product_detail_view.dart';
-import '../../models/product.dart';
+import '../../features/menu/domain/entities/product_entity.dart';
 import '../../features/orders/domain/entities/order_entity.dart';
 import '../../features/orders/domain/entities/payment_intent_entity.dart';
 
@@ -56,11 +56,11 @@ final routerProvider = Provider<GoRouter>((ref) {
               if (state.extra is Map<String, dynamic>) {
                 final map = state.extra as Map<String, dynamic>;
                 return ProductDetailView(
-                  product: map['product'] as Product,
+                  product: map['product'] as ProductEntity,
                   heroTag: map['heroTag'] as String?,
                 );
               }
-              final product = state.extra as Product;
+              final product = state.extra as ProductEntity;
               return ProductDetailView(product: product);
             },
           ),

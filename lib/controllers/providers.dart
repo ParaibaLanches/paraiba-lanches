@@ -4,7 +4,7 @@ import '../core/network/api_service.dart';
 
 import '../services/coupon_service.dart';
 import '../services/merchandising_service.dart';
-import '../services/menu_service.dart';
+
 
 import '../services/settings_service.dart';
 import '../services/websocket_service.dart';
@@ -15,9 +15,6 @@ final apiServiceProvider = Provider<ApiService>((ref) => ApiService());
 
 
 
-final menuServiceProvider = Provider<MenuService>((ref) {
-  return MenuService(ref.read(apiServiceProvider));
-});
 
 
 final couponServiceProvider = Provider<CouponService>((ref) {

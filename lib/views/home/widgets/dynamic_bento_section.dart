@@ -4,13 +4,13 @@ import '../../../core/constants/api_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/currency_formatter.dart';
-import '../../../models/product.dart';
+import '../../../features/menu/domain/entities/product_entity.dart';
 import '../../../models/merchandising_section.dart';
 import '../../widgets/section_header.dart';
 
 class DynamicBentoSection extends StatelessWidget {
   final MerchandisingSection section;
-  final Function(Product, GlobalKey) onAddTap;
+  final Function(ProductEntity, GlobalKey) onAddTap;
 
   const DynamicBentoSection({
     super.key,

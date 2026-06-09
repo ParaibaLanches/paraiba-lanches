@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/cart/presentation/providers/cart_providers.dart';
-import '../../controllers/menu_controller.dart' as mc;
+import '../../features/menu/presentation/providers/menu_providers.dart' as mc;
 import '../../controllers/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
@@ -132,7 +132,7 @@ class MenuView extends ConsumerWidget {
                     (context, index) => ProductCard(
                       product: filtered[index],
                       onAddTap: (key) {
-                        cartNotifier.addProduct(filtered[index]);
+                        cartNotifier.addProductEntity(filtered[index]);
                         final cartKey = ref.read(cartIconKeyProvider);
                         CartAnimationHelper.runFlyToCartAnimation(
                           context: context,

@@ -1,5 +1,5 @@
 import '../../domain/entities/cart_item_entity.dart';
-import '../../../../models/product.dart';
+import '../../../../features/menu/data/models/product_model.dart';
 
 class CartItemModel extends CartItemEntity {
   const CartItemModel({
@@ -9,7 +9,7 @@ class CartItemModel extends CartItemEntity {
   });
 
   factory CartItemModel.fromJson(Map<String, dynamic> json) => CartItemModel(
-        product: Product.fromJson(json['product']),
+        product: ProductModel.fromJson(json['product']),
         quantity: json['quantity'] as int? ?? 1,
         notes: json['notes'] as String? ?? '',
       );

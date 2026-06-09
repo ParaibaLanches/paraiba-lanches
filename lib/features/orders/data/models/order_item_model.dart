@@ -1,5 +1,5 @@
 import '../../domain/entities/order_item_entity.dart';
-import '../../../../models/product.dart';
+import '../../../../features/menu/data/models/product_model.dart';
 
 class OrderItemModel extends OrderItemEntity {
   const OrderItemModel({
@@ -16,7 +16,7 @@ class OrderItemModel extends OrderItemEntity {
         id: json['id'] as int,
         orderId: (json['order_id'] ?? json['orderId']) as int,
         productId: (json['product_id'] ?? json['productId']) as int,
-        product: json['product'] != null ? Product.fromJson(json['product']) : null,
+        product: json['product'] != null ? ProductModel.fromJson(json['product']) : null,
         quantity: json['quantity'] as int? ?? 1,
         unitPrice: double.tryParse((json['unit_price'] ?? json['unitPrice'])?.toString() ?? '0') ?? 0,
         notes: json['notes'] as String? ?? '',

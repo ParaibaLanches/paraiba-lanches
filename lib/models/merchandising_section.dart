@@ -1,4 +1,5 @@
-import 'product.dart';
+import '../features/menu/data/models/product_model.dart';
+import '../features/menu/domain/entities/product_entity.dart';
 
 enum MerchandisingLayoutType { hero, bento, horizontalList, grid, custom }
 
@@ -12,7 +13,7 @@ class MerchandisingSection {
   final int orderIndex;
   final bool active;
   final String titleColor;
-  final List<Product> products;
+  final List<ProductEntity> products;
 
   MerchandisingSection({
     required this.id,
@@ -60,7 +61,7 @@ class MerchandisingSection {
       active: json['active'] as bool? ?? true,
       titleColor: json['title_color'] as String? ?? 'black',
       products: (json['products'] is List ? json['products'] as List : [])
-          .map((p) => Product.fromJson(p))
+          .map((p) => ProductModel.fromJson(p))
           .toList(),
     );
   }

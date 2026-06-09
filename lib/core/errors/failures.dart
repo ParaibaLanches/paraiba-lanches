@@ -33,14 +33,14 @@ class Result<T> {
   T get value => _value!;
   Failure get failure => _failure!;
 
-  void fold({
-    required void Function(Failure failure) onFailure,
-    required void Function(T value) onSuccess,
+  R fold<R>({
+    required R Function(Failure failure) onFailure,
+    required R Function(T value) onSuccess,
   }) {
     if (isFailure) {
-      onFailure(failure);
+      return onFailure(failure);
     } else {
-      onSuccess(value);
+      return onSuccess(value);
     }
   }
 }
