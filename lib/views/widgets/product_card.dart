@@ -37,13 +37,13 @@ class ProductCard extends StatelessWidget {
         'heroTag': heroTag ?? 'product_image_${product.id}',
       }),
       child: Container(
-        margin: EdgeInsets.only(bottom: isGrid ? 0 : 16),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: AppColors.outlineVariant.withValues(alpha: 0.1),
+          color: AppColors.surface,
+          border: isGrid ? null : Border(
+            bottom: BorderSide(
+              color: AppColors.outlineVariant.withValues(alpha: 0.15),
+            ),
           ),
         ),
         child: isGrid ? _buildVerticalLayout() : _buildHorizontalLayout(),

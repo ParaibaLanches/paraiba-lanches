@@ -39,7 +39,7 @@ class AppButton extends StatelessWidget {
                     : null),
           borderRadius: BorderRadius.circular(16),
           border: isSecondary
-              ? Border.all(color: AppColors.primary, width: 2)
+              ? Border.all(color: AppColors.primary, width: 1)
               : null,
         ),
         child: ElevatedButton(

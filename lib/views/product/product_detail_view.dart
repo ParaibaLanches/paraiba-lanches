@@ -239,9 +239,6 @@ class _ProductDetailViewState extends ConsumerState<ProductDetailView> {
       decoration: BoxDecoration(
         color: AppColors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.outlineVariant.withValues(alpha: 0.5),
-        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -295,13 +292,11 @@ class _ProductDetailViewState extends ConsumerState<ProductDetailView> {
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
+        border: Border(
+          top: BorderSide(
+            color: AppColors.outlineVariant.withValues(alpha: 0.15),
           ),
-        ],
+        ),
       ),
       child: Row(
         children: [

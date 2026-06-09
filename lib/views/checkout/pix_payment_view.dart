@@ -40,7 +40,6 @@ class PixPaymentView extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.outlineVariant),
                 ),
                 child: Text(
                   paymentIntent.pixCopyPaste ?? 'Código não disponível',

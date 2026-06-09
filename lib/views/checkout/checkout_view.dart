@@ -264,12 +264,16 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
                   }
 
                   return Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.outlineVariant.withValues(alpha: 0.5),
+                      color: AppColors.surface,
+                      border: Border(
+                        bottom: BorderSide(
+                          color: AppColors.outlineVariant.withValues(alpha: 0.15),
+                        ),
+                        top: BorderSide(
+                          color: AppColors.outlineVariant.withValues(alpha: 0.15),
+                        ),
                       ),
                     ),
                     child: Row(
@@ -426,13 +430,11 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
+          border: Border(
+            top: BorderSide(
+              color: AppColors.outlineVariant.withValues(alpha: 0.15),
             ),
-          ],
+          ),
         ),
         child: SafeArea(
           child: SizedBox(
@@ -559,14 +561,12 @@ class _PaymentOption extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTap(value),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(12),
-          border: isSelected
-              ? Border.all(color: AppColors.primary, width: 2)
-              : null,
+          color: AppColors.surface,
+          border: Border(
+            bottom: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.15)),
+          ),
         ),
         child: Row(
           children: [

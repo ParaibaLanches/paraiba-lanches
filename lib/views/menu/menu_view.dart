@@ -158,14 +158,12 @@ class MenuView extends ConsumerWidget {
           : Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.surfaceContainerLowest,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    offset: const Offset(0, -8),
-                    blurRadius: 24,
+                color: AppColors.surface,
+                border: Border(
+                  top: BorderSide(
+                    color: AppColors.outlineVariant.withValues(alpha: 0.15),
                   ),
-                ],
+                ),
               ),
               child: SafeArea(
                 child: AppButton(

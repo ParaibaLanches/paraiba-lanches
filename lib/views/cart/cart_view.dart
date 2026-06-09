@@ -45,16 +45,20 @@ class CartView extends ConsumerWidget {
               children: [
                 Expanded(
                   child: ListView.separated(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     itemCount: cart.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 12),
+                    separatorBuilder: (_, _) => const SizedBox(height: 0),
                     itemBuilder: (context, index) {
                       final item = cart[index];
                       return Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLowest,
-                          borderRadius: BorderRadius.circular(12),
+                          color: AppColors.surface,
+                          border: Border(
+                            bottom: BorderSide(
+                              color: AppColors.outlineVariant.withValues(alpha: 0.15),
+                            ),
+                          ),
                         ),
                         child: Row(
                           children: [
@@ -156,14 +160,12 @@ class CartView extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceContainerLowest,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.06),
-                        offset: const Offset(0, -8),
-                        blurRadius: 24,
+                    color: AppColors.surface,
+                    border: Border(
+                      top: BorderSide(
+                        color: AppColors.outlineVariant.withValues(alpha: 0.15),
                       ),
-                    ],
+                    ),
                   ),
                   child: SafeArea(
                     child: Column(
