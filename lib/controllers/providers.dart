@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/api_service.dart';
-import '../services/auth_service.dart';
+import '../core/network/api_service.dart';
+
 import '../services/coupon_service.dart';
 import '../services/merchandising_service.dart';
 import '../services/menu_service.dart';
@@ -13,9 +13,7 @@ import '../models/app_info.dart';
 // Services
 final apiServiceProvider = Provider<ApiService>((ref) => ApiService());
 
-final authServiceProvider = Provider<AuthService>((ref) {
-  return AuthService(ref.read(apiServiceProvider));
-});
+
 
 final menuServiceProvider = Provider<MenuService>((ref) {
   return MenuService(ref.read(apiServiceProvider));

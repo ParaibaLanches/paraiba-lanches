@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../core/utils/viacep_service.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import '../../controllers/auth_controller.dart';
+import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../core/constants/api_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
