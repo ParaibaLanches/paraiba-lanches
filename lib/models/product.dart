@@ -52,24 +52,24 @@ class Product {
     name: json['name'] as String,
     description: json['description'] as String? ?? '',
     price: (json['price'] as num).toDouble(),
-    categoryId: json['category_id'] as int,
+    categoryId: (json['category_id'] ?? json['categoryId']) as int,
     category: json['category'] != null
         ? Category.fromJson(json['category'])
         : null,
-    imageUrl: json['image_url'] as String? ?? '',
-    isFeatured: json['is_featured'] as bool? ?? false,
-    featuredSlot: json['featured_slot'] as String? ?? 'none',
-    promotionLabel: json['promotion_label'] as String? ?? '',
-    ingredients: json['ingredients'] != null
+    imageUrl: (json['image_url'] ?? json['imageUrl']) as String? ?? '',
+    isFeatured: (json['is_featured'] ?? json['isFeatured']) as bool? ?? false,
+    featuredSlot: (json['featured_slot'] ?? json['featuredSlot']) as String? ?? 'none',
+    promotionLabel: (json['promotion_label'] ?? json['promotionLabel']) as String? ?? '',
+    ingredients: (json['ingredients'] is List)
         ? (json['ingredients'] as List)
               .map((i) => Ingredient.fromJson(i))
               .toList()
         : [],
-    discountPercentage: json['discount_percentage'] != null
-        ? (json['discount_percentage'] as num).toDouble()
+    discountPercentage: (json['discount_percentage'] ?? json['discountPercentage']) != null
+        ? ((json['discount_percentage'] ?? json['discountPercentage']) as num).toDouble()
         : null,
-    promotionalPrice: json['promotional_price'] != null
-        ? (json['promotional_price'] as num).toDouble()
+    promotionalPrice: (json['promotional_price'] ?? json['promotionalPrice']) != null
+        ? ((json['promotional_price'] ?? json['promotionalPrice']) as num).toDouble()
         : null,
     available: json['available'] as bool? ?? true,
   );

@@ -44,7 +44,7 @@ class DynamicHeroSection extends StatelessWidget {
                     width: 480,
                     fit: BoxFit.contain,
                   )
-                : const Icon(Icons.fastfood, size: 200, color: Colors.white24),
+                : const Icon(Icons.image_outlined, size: 200, color: Colors.white24),
           ),
           // Gradient overlay for text readability
           Positioned.fill(
@@ -121,10 +121,12 @@ class DynamicHeroSection extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   heroProduct.name.toUpperCase(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTypography.displayLarge.copyWith(
                     height: 0.9,
-                    letterSpacing: -2,
-                    fontSize: heroProduct.name.length > 10 ? 44 : 52,
+                    letterSpacing: -1.5,
+                    fontSize: heroProduct.name.length > 10 ? 32 : 40,
                     color: section.titleColor == 'white'
                         ? Colors.white
                         : (section.titleColor == 'primary'

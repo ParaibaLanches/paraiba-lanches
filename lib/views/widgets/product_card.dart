@@ -116,7 +116,7 @@ class ProductCard extends StatelessWidget {
                 )
               : Container(
                   color: AppColors.surfaceContainer,
-                  child: const Icon(Icons.lunch_dining, size: 24),
+                  child: const Icon(Icons.image_outlined, size: 24, color: Colors.black26),
                 ),
         ),
       ),
@@ -135,7 +135,7 @@ class ProductCard extends StatelessWidget {
         shadows: isWhite ? AppTypography.textShadows : null,
       ),
       textAlign: centered ? TextAlign.center : TextAlign.start,
-      maxLines: 1,
+      maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
   }

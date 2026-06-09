@@ -59,7 +59,7 @@ class MerchandisingSection {
       orderIndex: json['order_index'] as int? ?? 0,
       active: json['active'] as bool? ?? true,
       titleColor: json['title_color'] as String? ?? 'black',
-      products: (json['products'] as List? ?? [])
+      products: (json['products'] is List ? json['products'] as List : [])
           .map((p) => Product.fromJson(p))
           .toList(),
     );

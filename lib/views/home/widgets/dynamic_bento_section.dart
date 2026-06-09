@@ -134,7 +134,10 @@ class _BentoCard extends StatelessWidget {
                     width: 220,
                     fit: BoxFit.contain,
                   )
-                : const SizedBox(),
+                : const Padding(
+                    padding: EdgeInsets.all(32),
+                    child: Icon(Icons.image_outlined, size: 100, color: Colors.black12),
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(24),
@@ -165,7 +168,9 @@ class _BentoCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   title.toUpperCase(),
-                  style: AppTypography.headlineMedium.copyWith(
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.headlineSmall.copyWith(
                     fontWeight: FontWeight.w900,
                     color: resolvedTitleColor,
                     letterSpacing: -0.5,

@@ -88,7 +88,7 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
     final user = ref.read(authControllerProvider).user;
     if (cartItems.isEmpty) return;
 
-    if (_orderType == 'delivery' && (user?.address ?? '').isEmpty) {
+    if (_orderType == 'delivery' && (user?.fullAddress ?? '').isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor, cadastre um endereço no seu perfil'),
@@ -107,7 +107,9 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
             paymentMethod: _paymentMethod,
             paymentAmount: checkoutState.calculateTotal(cartNotifier.total),
             orderType: _orderType,
-            notes: _orderType == 'delivery' ? 'Endereço: ${user?.address}' : '',
+            notes: _orderType == 'delivery' ? 'Endereço: ${user?.fullAddress}' : '',
+            deliveryFee: checkoutState.deliveryFee,
+            discountAmount: checkoutState.appliedCoupon?.calculateDiscount(cartNotifier.total) ?? 0,
           );
       cartNotifier.clear();
       ref.read(checkoutProvider.notifier).setCoupon(null);
@@ -183,7 +185,7 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
                       final userAddress = ref
                           .read(authControllerProvider)
                           .user
-                          ?.address;
+                          ?.fullAddress;
                       if (userAddress != null && userAddress.isNotEmpty) {
                         _handleCalculateDelivery(userAddress);
                       }
@@ -213,7 +215,7 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
               Consumer(
                 builder: (context, ref, _) {
                   final user = ref.watch(authControllerProvider).user;
-                  final address = user?.address ?? '';
+                  final address = user?.fullAddress ?? '';
 
                   if (address.isEmpty) {
                     return Container(

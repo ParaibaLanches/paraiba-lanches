@@ -15,19 +15,45 @@ class MerchandisingService {
         final data = response['data'] as Map<String, dynamic>;
         
         // Convert the "featured_products" list from Next.js into a MerchandisingSection
-        final featuredProductsJson = data['featured_products'] as List<dynamic>? ?? [];
+        final featuredProductsJson = data['featured_products'] is List 
+            ? data['featured_products'] as List<dynamic>
+            : [];
         
-        if (featuredProductsJson.isEmpty) return [];
+        final heroProducts = featuredProductsJson.where((p) => p['featured_slot'] == 'hero').toList();
+        final bentoProducts = featuredProductsJson.where((p) => p['featured_slot'] == 'bento_1').toList();
+        final otherProducts = featuredProductsJson.where((p) => p['featured_slot'] == 'none' || p['featured_slot'] == null).toList();
 
-        final section = MerchandisingSection.fromJson({
-          'id': 1,
-          'title': 'Destaques',
-          'subtitle': 'Os mais pedidos',
-          'layout_type': 'horizontal_list',
-          'products': featuredProductsJson,
-        });
+        final sections = <MerchandisingSection>[];
 
-        return [section];
+        if (heroProducts.isNotEmpty) {
+          sections.add(MerchandisingSection.fromJson({
+            'id': 1,
+            'title': 'Oferta Imperdível',
+            'layout_type': 'hero',
+            'products': heroProducts,
+          }));
+        }
+
+        if (bentoProducts.isNotEmpty) {
+          sections.add(MerchandisingSection.fromJson({
+            'id': 2,
+            'title': 'Destaques',
+            'subtitle': 'Escolhidos para você',
+            'layout_type': 'bento',
+            'products': bentoProducts,
+          }));
+        }
+
+        if (otherProducts.isNotEmpty) {
+          sections.add(MerchandisingSection.fromJson({
+            'id': 3,
+            'title': 'Mais Pedidos',
+            'layout_type': 'horizontal_list',
+            'products': otherProducts,
+          }));
+        }
+
+        return sections;
       }
       return [];
     } catch (e) {

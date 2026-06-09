@@ -47,11 +47,11 @@ class OrderItem {
 
   factory OrderItem.fromJson(Map<String, dynamic> json) => OrderItem(
     id: json['id'] as int,
-    orderId: json['order_id'] as int,
-    productId: json['product_id'] as int,
+    orderId: (json['order_id'] ?? json['orderId']) as int,
+    productId: (json['product_id'] ?? json['productId']) as int,
     product: json['product'] != null ? Product.fromJson(json['product']) : null,
-    quantity: json['quantity'] as int,
-    unitPrice: (json['unit_price'] as num).toDouble(),
+    quantity: json['quantity'] as int? ?? 1,
+    unitPrice: double.tryParse((json['unit_price'] ?? json['unitPrice'])?.toString() ?? '0') ?? 0,
     notes: json['notes'] as String? ?? '',
   );
 }
@@ -66,7 +66,7 @@ class Payment {
   factory Payment.fromJson(Map<String, dynamic> json) => Payment(
     id: json['id'] as int,
     method: json['method'] as String,
-    amount: (json['amount'] as num).toDouble(),
+    amount: double.tryParse(json['amount']?.toString() ?? '0') ?? 0,
   );
 }
 
@@ -106,12 +106,12 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> json) => Order(
     id: json['id'] as int,
     code: json['code'] as String,
-    orderType: json['order_type'] as String,
+    orderType: (json['order_type'] ?? json['orderType']) as String,
     status: json['status'] as String,
-    total: (json['total'] as num).toDouble(),
-    subtotal: (json['subtotal'] as num?)?.toDouble() ?? 0,
-    deliveryFee: (json['delivery_fee'] as num?)?.toDouble() ?? 0,
-    discount: (json['discount'] as num?)?.toDouble() ?? 0,
+    total: double.tryParse(json['total']?.toString() ?? '0') ?? 0,
+    subtotal: double.tryParse(json['subtotal']?.toString() ?? '0') ?? 0,
+    deliveryFee: double.tryParse((json['delivery_fee'] ?? json['deliveryFee'])?.toString() ?? '0') ?? 0,
+    discount: double.tryParse((json['discount'] ?? json['discountAmount'])?.toString() ?? '0') ?? 0,
     notes: json['notes'] as String? ?? '',
     items:
         (json['items'] as List<dynamic>?)
@@ -123,8 +123,8 @@ class Order {
             ?.map((e) => Payment.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [],
-    paymentIntent: json['payment_intent'] != null ? PaymentIntent.fromJson(json['payment_intent']) : null,
-    createdAt: json['created_at'] as String,
-    updatedAt: json['updated_at'] as String,
+    paymentIntent: (json['payment_intent'] ?? json['paymentIntent']) != null ? PaymentIntent.fromJson(json['payment_intent'] ?? json['paymentIntent']) : null,
+    createdAt: (json['created_at'] ?? json['createdAt']) as String,
+    updatedAt: (json['updated_at'] ?? json['updatedAt']) as String,
   );
 }

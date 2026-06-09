@@ -14,12 +14,16 @@ class OrderService {
     required double paymentAmount,
     String orderType = 'local',
     String notes = '',
+    double deliveryFee = 0,
+    double discountAmount = 0,
   }) async {
     final res = await _api.post(
       ApiConstants.orders,
       data: {
         'order_type': orderType,
         'notes': notes,
+        'delivery_fee': deliveryFee,
+        'discount_amount': discountAmount,
         'items': items
             .map(
               (i) => {

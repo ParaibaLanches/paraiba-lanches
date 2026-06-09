@@ -31,6 +31,39 @@ class CustomerProfile {
     this.avatarUrl = '',
   });
 
+  String get fullAddress {
+    List<String> parts = [];
+    if (street.isNotEmpty) parts.add(street);
+    if (number.isNotEmpty) parts.add(number);
+    if (neighborhood.isNotEmpty) parts.add(neighborhood);
+    
+    String result = parts.join(', ');
+    
+    if (city.isNotEmpty && state.isNotEmpty) {
+      if (result.isNotEmpty) result += ' - ';
+      result += '$city/$state';
+    } else if (city.isNotEmpty) {
+      if (result.isNotEmpty) result += ' - ';
+      result += city;
+    }
+    
+    if (cep.isNotEmpty) {
+      if (result.isNotEmpty) result += ' - CEP: ';
+      result += cep;
+    }
+
+    if (complement.isNotEmpty) {
+      if (result.isNotEmpty) result += '\n';
+      result += 'Complemento: $complement';
+    }
+
+    if (result.isEmpty && address.isNotEmpty) {
+      return address;
+    }
+
+    return result;
+  }
+
   factory CustomerProfile.fromJson(Map<String, dynamic> json) =>
       CustomerProfile(
         id: json['id'] as int,
