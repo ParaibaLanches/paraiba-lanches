@@ -1,7 +1,7 @@
 import '../core/constants/api_constants.dart';
 import '../models/cart_item.dart';
 import '../models/order.dart';
-import 'api_service.dart';
+import '../core/network/api_service.dart';
 
 class OrderService {
   final ApiService _api;

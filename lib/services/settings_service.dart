@@ -1,6 +1,6 @@
 import '../core/constants/api_constants.dart';
 import '../models/app_info.dart';
-import 'api_service.dart';
+import '../core/network/api_service.dart';
 
 class SettingsService {
   final ApiService _api;
