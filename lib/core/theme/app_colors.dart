@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Primary - Vibrant, modern, clean orange-red
-  static const primary = Color(0xFFFF5A26);
-  static const primaryContainer = Color(0xFFFFEBE5);
-  static const primaryDim = Color(0xFFE64A19);
+  // Primary - Pleasant, balanced orange
+  static const primary = Color(0xFFF97316); // Tailwind Orange 500
+  static const primaryContainer = Color(0xFFFFEDD5); // Tailwind Orange 100
+  static const primaryDim = Color(0xFFEA580C); // Tailwind Orange 600
   static const onPrimary = Color(0xFFFFFFFF);
-  static const onPrimaryContainer = Color(0xFFC43A00);
+  static const onPrimaryContainer = Color(0xFF9A3412); // Tailwind Orange 800
 
   // Secondary - High contrast dark for elegance
   static const secondary = Color(0xFF212121);

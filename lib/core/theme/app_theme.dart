@@ -182,6 +182,23 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
         elevation: 0,
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: AppColors.surface,
+        indicatorColor: AppColors.primaryContainer,
+        elevation: 0,
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: AppColors.primary);
+          }
+          return const IconThemeData(color: AppColors.onSurfaceVariant);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return getB(12, FontWeight.w700, color: AppColors.primary);
+          }
+          return getB(12, FontWeight.w600, color: AppColors.onSurfaceVariant);
+        }),
+      ),
       dividerTheme: const DividerThemeData(
         color: AppColors.surfaceContainer,
         space: 24,
